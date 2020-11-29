@@ -2,8 +2,8 @@
 #  type: adhoc
 #  classes:
 #    ym_weekly: https://pluralsight.zoom.us/j/99216271950?pwd=UnVTNEtybXI2YjFidW5kTUdPa2ltUT09
-- date: 2020-11-29
-  type: fifth # odd | even | fifth | all
+- date: 2020-12-06
+  type: odd # odd | even | fifth | all
   classes:
     rs: https://zoom.us/j/97154700537?pwd=L2tlSzhFSzBoT25yc0JPTy8rYk40dz09
     eq: https://pluralsight.zoom.us/j/93473251104?pwd=cGFSeUlUS0V0TmZzcTJ5UkcxK2xwdz09
@@ -12,4 +12,4 @@
     ss-adult: https://pluralsight.zoom.us/j/92032608075?pwd=R0pieDNjaE9JdXVCeHVTTkF4Q2pjQT09
     ss-youth: https://pluralsight.zoom.us/j/96273168166?pwd=cEpFVjg2SDhjWnEzT0IrQ1VObWdodz09
     fifth: https://pluralsight.zoom.us/j/92032608075?pwd=R0pieDNjaE9JdXVCeHVTTkF4Q2pjQT09
-    sacrament: https://youtu.be/PQObT_koPS0
+    sacrament: https://youtu.be/bGZr7WspMEc
