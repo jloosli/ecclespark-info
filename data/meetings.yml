@@ -47,7 +47,7 @@ sacrament:
   type: all
 
 ym_weekly:
-  name: Young Men Wednesday Night
+  name: Youth Kickoff
   image: images/ym.svg
   time: 7:00pm
   type: adhoc
