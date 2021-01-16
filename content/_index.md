@@ -14,4 +14,4 @@ Remember! Stake conference adult sessions are as follows:
 * Leadership Session: Sunday, January 17th at 7:30am
 * General Session: Sunday, January 17th at 10am
 
-You will receive an email later this week with links to the sessions
+Links to the sessions can be found at the [Ogden East Stake website](https://ogdeneaststake.com)
