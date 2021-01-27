@@ -1,7 +1,7 @@
-#- date: 2021-01-13
-#  type: adhoc
-#  classes:
-#    ym_weekly: https://pluralsight.zoom.us/j/99216271950?pwd=UnVTNEtybXI2YjFidW5kTUdPa2ltUT09
+- date: 2021-01-27
+  type: adhoc
+  classes:
+    ym_weekly: https://pluralsight.zoom.us/j/99216271950?pwd=UnVTNEtybXI2YjFidW5kTUdPa2ltUT09
 - date: 2021-01-31
   type: fifth # odd | even | fifth | all
   classes:
