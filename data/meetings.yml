@@ -34,9 +34,15 @@ ss-youth:
   time: 10:30am
   type: odd
 
-fifth:
-  name: 5th Sunday Lesson
+fifth-adult:
+  name: 5th Sunday Adult Lesson
   image: images/ss_adult.svg
+  time: 10:30am
+  type: fifth
+  
+fifth-youth:
+  name: 5th Sunday Youth Lesson
+  image: images/ss_youth.svg
   time: 10:30am
   type: fifth
 
