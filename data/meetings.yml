@@ -53,7 +53,7 @@ sacrament:
   type: all
 
 ym_weekly:
-  name: Youth Kickoff
+  name: Young Men
   image: images/ym.svg
   time: 7:00pm
   type: adhoc
