@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - run: yarn
       - name: Build Site
         uses: chabad360/hugo-actions@master
