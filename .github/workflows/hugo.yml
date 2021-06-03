@@ -17,6 +17,7 @@ jobs:
         uses: chabad360/hugo-gh-pages@master
         with:
           githubToken: ${{ secrets.BUILD_TOKEN }}
+          args: --gc --minify --cleanDestinationDir --baseURL="https://jloosli.github.io/ecclespark-info/"
 
       - name: Send Push Notification
         uses: techulus/push-github-action@1.0.0
