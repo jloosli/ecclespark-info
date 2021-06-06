@@ -5,7 +5,7 @@
   </section>
   {{- range $week := $.Site.Data.week -}}
   <section class="dateSection">
-    <h2>Meetings for {{ dateFormat "Monday, Jan 2, 2006" .date }}</h2>
+    <h2>Online meetings for {{ dateFormat "Monday, Jan 2, 2006" .date }}</h2>
     <div class="cards">
       {{ range $id, $link := .classes }}
       {{ $currentMeeting := index $.Site.Data.meetings $id }}
