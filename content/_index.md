@@ -5,6 +5,8 @@
 
 ## Stake Conference
 
+Stake conference links can be found at https://www.ogdeneaststake.com/
+
 * **Saturday June 12th - 6pm-7:30pm Evening Session**
   This session will be **broadcast to the entire stake** and **18-30 year olds, single and married are invited to attend
   in person at the stake center**.
