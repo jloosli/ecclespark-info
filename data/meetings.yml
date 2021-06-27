@@ -8,7 +8,7 @@ eq:
   name: Elders Quorum
   image: images/eq2.svg
   time: 10:30am
-  type: even
+  type: even-no
 
 ym:
   name: Young Men
