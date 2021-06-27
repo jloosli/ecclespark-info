@@ -14,13 +14,13 @@ ym:
   name: Young Men
   image: images/ym.svg
   time: 10:30am
-  type: even
+  type: even-no
 
 yw:
   name: Young Women
   image: images/yw.svg
   time: 10:30am
-  type: even
+  type: even-no
 
 ss-adult:
   name: Adult Sunday School
