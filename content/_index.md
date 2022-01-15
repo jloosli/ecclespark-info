@@ -1,5 +1,9 @@
 # Announcements
 
-## Starting in 2022
-* Sacrament meeting is in person and virtual at the link below, starting at 11:30am
-* Second hour classes are generally in person only and start at around 12:40pm
+## Stake Conference January 15-16, 2021
+
+* Adult Session will is 6pm, Saturday, January 15th
+* Leadership Session is 8am, Sunday, January 16th
+* General Session is 11am, Sunday, January 16th
+
+Details on all meetings can be found at the [Ogden East Stake website](https://ogdeneaststake.com)
