@@ -1,3 +1,9 @@
+sacrament:
+  name: Sacrament Meeting
+  image: images/speaker_female.svg
+  time: 11:30am
+  type: all
+
 rs:
   name: Relief Society
   image: images/relief_society.svg
@@ -45,12 +51,6 @@ fifth-youth:
   image: images/ss_youth.svg
   time: 10:30am
   type: fifth
-
-sacrament:
-  name: Sacrament Meeting
-  image: images/speaker_female.svg
-  time: 11:30am
-  type: all
 
 ym_weekly:
   name: Young Men
