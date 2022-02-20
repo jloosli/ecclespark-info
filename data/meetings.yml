@@ -32,13 +32,13 @@ ss-adult:
   name: Adult Sunday School
   image: images/ss_adult.svg
   time: 10:30am
-  type: odd
+  type: odd-other
 
 ss-youth:
   name: Youth Sunday School
   image: images/ss_youth.svg
   time: 10:30am
-  type: odd
+  type: odd-other
 
 fifth-adult:
   name: 5th Sunday Adult Lesson
