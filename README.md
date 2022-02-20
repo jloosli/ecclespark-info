@@ -7,7 +7,7 @@
 1. Set up a new [Sacrament Meeting link](https://studio.youtube.com/channel/UCbq1hkTjdy6dKzQmbLDQk9g/livestreaming) and copy the link
 2. Edit the [week.yml](data/week.yml) datafile
    * Change date to next Sunday
-   * Set whether it's an odd or an even week
+   * Set whether it's an `odd` or an `even` week
    * Copy the sacrament meeting link (above) to the `sacrament` field
 3. Update [Announcements](content/_index.md) as needed
 
