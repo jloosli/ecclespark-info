@@ -3,9 +3,9 @@
 #   classes:
 #     ym_weekly: https://pluralsight.zoom.us/j/97202907235?pwd=RVltMnMxTkZKcWR2LytvajdydWZvQT09
 - date: 2022-04-10
-  type: even # odd | even | fifth | all odd-other
+  type: odd # odd | even | fifth | all odd-other
   classes:
-    sacrament: https://youtu.be/rGyTHnIZNro
+    sacrament: https://youtu.be/8tfeTr8CH08
     rs: https://zoom.us/j/97154700537?pwd=L2tlSzhFSzBoT25yc0JPTy8rYk40dz09
     eq: https://pluralsight.zoom.us/j/94749043815?pwd=aW5nZkkzWnlucVNkNmthRkg1YTBidz09
     ym: https://pluralsight.zoom.us/j/92070677544?pwd=NXJ6ZUhmckg5cWdTZ1Z5eHJXUHlidz09
