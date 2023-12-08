@@ -1,7 +1,7 @@
 sacrament:
   name: Sacrament Meeting
   image: images/speaker_female.svg
-  time: 9:00am
+  time: 12:00pm
   type: all
   weight: 1
 
