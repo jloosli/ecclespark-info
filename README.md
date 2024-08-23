@@ -23,3 +23,8 @@
 7. At the end of the meeting, shut down in reverse order (remember that the broadcast from Youtube is delayed, so check the laptop for when to stop
    1. Stop Youtube Broadcast (laptop)
    2. Stop Mevo Broadcast (cell phone)
+
+## Other
+
+* Images are found at [Undraw](https://undraw.co/search)
+* Accent color: `#3F51B5`

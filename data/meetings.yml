@@ -53,17 +53,24 @@ fifth-adult:
   time: 10:30am
   type: fifth
   weight: 8
-  
+
 fifth-youth:
   name: 5th Sunday Youth Lesson
   image: images/ss_youth.svg
   time: 10:30am
   type: fifth
   weight: 9
-  
+
 ym_weekly:
   name: Young Men
   image: images/ym.svg
   time: 7:00pm
   type: adhoc
   weight: 10
+
+extra:
+  name: Brent Castle Funeral
+  image: images/undraw_outdoors.svg
+  time: 2:00pm
+  type: adhoc
+  weight: 11
