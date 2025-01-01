@@ -1,15 +1,15 @@
-version: '3.7'
+name: ecclespark_site
 
 services:
   server:
-    image: klakegg/hugo:ext
+    image: hugomods/hugo:exts-non-root
     command: server
     volumes:
       - ".:/src"
     ports:
-      - "1313:1313"
+      - 1313:1313
 
   build:
-    image: klakegg/hugo:ext
+    image: hugomods/hugo:exts-non-root
     volumes:
       - ".:/src"

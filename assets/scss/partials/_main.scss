@@ -14,10 +14,10 @@
     display: grid;
     grid-template-rows: 80% auto;
     align-items: baseline;
-    border: 1px solid $divider-color;
+    border: 1px solid var(--divider-color);
     height: 100%;
-    background-color: #fafafa;
-    box-shadow: 0.1rem 0.1rem 0.1rem #ccc;
+    background-color: var(--card-background);
+    box-shadow: 0.1rem 0.1rem 0.1rem var(--card-shadow);
     border-radius: 0.5rem;
 
     h1,h2,h3,h4,h5,h6 {
@@ -25,7 +25,7 @@
     }
 
     &:hover .title {
-      background-color: #ddd;
+      background-color: var(--title-hover);
     }
 
     .image {
@@ -33,12 +33,10 @@
       padding: 1rem;
       align-self: end;
       justify-self: center;
-      img {
-      }
     }
 
     .title {
-      border-top: 1px solid $divider-color;
+      border-top: 1px solid var(--divider-color);
       height: 100%;
       display: flex;
       flex-flow: column;
@@ -55,4 +53,3 @@ img {
   max-width: 100%;
   max-height: 100%;
 }
-

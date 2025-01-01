@@ -1,6 +1,6 @@
 header {
   padding: 1rem;
-  color: $primary-color-text;
-  background-color: $primary-color;
-  box-shadow: 0.1rem 0.1rem 1rem $primary-text-color;
+  color: var(--primary-color-text);
+  background-color: var(--primary-color);
+  box-shadow: 0.1rem 0.1rem 1rem var(--primary-text-color);
 }
