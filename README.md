@@ -28,3 +28,7 @@
 
 * Images are found at [Undraw](https://undraw.co/search)
 * Accent color: `#3F51B5`
+
+## Local Development
+
+`docker up server` (not `docker run server`)
