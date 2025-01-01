@@ -10,7 +10,7 @@
 
 {{- else -}}
 
-{{- $secureCss := $sass | resources.ExecuteAsTemplate "main.scss" . | toCSS $cssOpts | resources.PostCSS | fingerprint -}}
+{{- $secureCss := $sass | resources.ExecuteAsTemplate "main.scss" . | toCSS $cssOpts | css.PostCSS | fingerprint -}}
 <link rel="stylesheet" href="{{ $secureCss.Permalink | absURL }}" integrity="{{ $secureCss.Data.Integrity }}"
       media="screen">
 
