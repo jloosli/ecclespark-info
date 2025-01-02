@@ -20,7 +20,7 @@
 4. Start the broadcast when the meeting starts
 5. Stop the Mevo Camera feed during the Sacrament
 6. Start the Mevoa Camera feed after the Sacrament
-7. At the end of the meeting, shut down in reverse order (remember that the broadcast from Youtube is delayed, so check the laptop for when to stop
+7. At the end of the meeting, shut down in reverse order (remember that the broadcast from Youtube is delayed, so check the laptop for when to stop)
    1. Stop Youtube Broadcast (laptop)
    2. Stop Mevo Broadcast (cell phone)
 
