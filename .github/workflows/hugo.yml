@@ -64,6 +64,15 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}'
+          channelId: live
+          projectId: ecclespark-info
+        env:
+          FIREBASE_CLI_PREVIEWS: hostingchannels
+
 
   # Deployment job
   deploy:
