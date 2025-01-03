@@ -30,7 +30,9 @@
 <!--</div>-->
 {{/*  SECTION: Add Scripts
 =======================================================================  */}}
-
+{{ block "js" . }}
+{{- partial "js.html" . -}}
+{{ end }}
 {{ block "addscripts" . }}
 {{/*  for adding additional scripts based on page template  */}}
 {{ end }}
