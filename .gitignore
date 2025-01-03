@@ -4,3 +4,4 @@ public/
 resources
 .firebaserc
 *.lock
+.env
