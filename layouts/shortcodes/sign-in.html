@@ -9,7 +9,7 @@
   <form id="meeting_form">
     <h3>Add Meeting:</h3>
     <input type="date" name="date" required />
-    <input type="time" name="time" required value="09:00" />
+    <input type="time" name="time" required value="10:00" />
     <button type="submit">Submit</button>
   </form>
   <div.err></div.err>
@@ -25,6 +25,8 @@
   const CLIENT_ID = '{{ getenv "HUGO_CLIENT_ID" }}';
   const API_KEY = '{{ getenv "HUGO_API_KEY" }}';
   const CHANNEL_ID = '{{ getenv "HUGO_CHANNEL_ID" }}';
+  const EDIT_WEEK_LINK =
+    "https://github.com/jloosli/ecclespark-info/edit/main/data/week.yml";
 
   const google_btn = document.getElementById("google_btn");
   const calendar_select = document.getElementById("calendar_select");
@@ -47,12 +49,12 @@
   }
 
   function onLoggedIn(response) {
-    const decoded = decodeJwtResponse(response.credential);
-    console.log(decoded);
+    const decodedUser = decodeJwtResponse(response.credential);
+    console.log(decodedUser);
     google_btn.style.display = "none";
     calendar_select.style.display = "block";
-    cs_name.innerHTML = decoded.name;
-    cs_pic.src = decoded.picture;
+    cs_name.innerHTML = decodedUser.name;
+    cs_pic.src = decodedUser.picture;
     gapi.load("client");
   }
 
@@ -114,12 +116,12 @@
       })
       .then(
         function (response) {
+          console.log(response);
+          const videoLink = prepareVideoLinkFromId(response.result.id);
+          meeting_info.innerHTML = `<h3>Meeting scheduled:</h3> <a href="${videoLink}">${videoLink}</a> <img onclick="copyLinkToClipboard('${videoLink}')" src="/images/copy-svgrepo-com.svg" alt="Copy Icon" style="cursor: pointer; width: 20px; height: 20px;" />
+          <p>Copy the above link and paste it into <a href="${EDIT_WEEK_LINK}" target="_blank">Github</a>.</p>`;
           meeting_info.style.display = "block";
-          meeting_info.querySelector("pre").innerHTML = JSON.stringify(
-            response.result,
-            null,
-            2
-          );
+
           if (response.result.snippet.channelId !== CHANNEL_ID) {
             alert("Wrong Channel!");
           }
@@ -130,6 +132,21 @@
           console.log("Error: " + reason.result.error.message);
         }
       );
+  }
+
+  function prepareVideoLinkFromId(videoId) {
+    return `https://youtube.com/live/${videoId}`;
+  }
+
+  function copyLinkToClipboard(link) {
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        console.log("Link copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Could not copy link: ", err);
+      });
   }
 
   function decodeJwtResponse(token) {
