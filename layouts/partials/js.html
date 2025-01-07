@@ -1,6 +1,9 @@
 {{ with resources.Get "ts/index.ts" }}
+  {{ $shims := dict  }}
+  {{ $opts := dict "targetPath" "js/index.js" "shims" $shims }}
+
   {{ if hugo.IsDevelopment }}
-     {{ with . | js.Build }}
+    {{ with . | js.Build $opts}}
       <script src="{{ .RelPermalink }}"></script>
     {{ end }}
   {{ else }}

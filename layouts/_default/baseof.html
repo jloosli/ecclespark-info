@@ -5,21 +5,17 @@
 {{/*  SECTION: Scratch Body Classes
 =======================================================================  */}}
 
-{{ $bodyclass := .Page.Params.bodyclass }}
-
-{{ if $bodyclass }}
-{{ .Scratch.Add "classes" (slice $bodyclass) }}
-{{ end }}
+{{ $bodyclass :=  .Page.Params.bodyclass | default "" }}
 
 {{ if .IsHome }}
-{{ .Scratch.Add "classes" (slice "home") }}
+{{ $bodyclass = (print $bodyclass " home") }}
 {{ end }}
 
-{{ .Scratch.Add "classes" (slice (printf "type-%s" .Type)) }}
+{{ $bodyclass = (printf "%s type-%s" $bodyclass .Type) }}
 
 {{/*  End: Scratch Body Classes  */}}
 
-<body class="{{ delimit (.Scratch.Get "classes") " " }}">
+<body class="{{ $bodyclass }}">
 {{ block "header" . }}
 {{- partial "header.html" . -}}
 {{ end }}
