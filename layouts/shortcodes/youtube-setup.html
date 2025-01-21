@@ -8,6 +8,16 @@
   </h2>
   <form id="meeting_form">
     <h3>Add Meeting:</h3>
+    <div>
+      <label for="title">Title:</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        value="Eccles Park Ward Sacrament Meeting"
+        required
+      />
+    </div>
     <input type="date" name="date" required />
     <input type="time" name="time" required value="10:00" />
     <button type="submit">Submit</button>
@@ -19,12 +29,17 @@
   <pre></pre>
 </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://apis.google.com/js/api.js" async defer ></script>
-<script src="https://cdn.jsdelivr.net/npm/temporal-polyfill@0.2.5/global.min.js" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/temporal-polyfill@0.2.5/global.min.js"
+  async
+  defer
+></script>
 <script>
   const CLIENT_ID = '{{ getenv "HUGO_CLIENT_ID" }}';
   const API_KEY = '{{ getenv "HUGO_API_KEY" }}';
   const CHANNEL_ID = '{{ getenv "HUGO_CHANNEL_ID" }}';
+  const STREAM_ID = '{{ getenv "HUGO_STREAM_ID" }}';
   const EDIT_WEEK_LINK =
     "https://github.com/jloosli/ecclespark-info/edit/main/data/week.yml";
 
@@ -63,6 +78,7 @@
     const form = event.target;
     const date = form.querySelector('input[name="date"]').value;
     const time = form.querySelector('input[name="time"]').value;
+    const title = form.querySelector('input[name="title"]').value;
     const plainDate = Temporal.PlainDate.from(date);
     const plainTime = Temporal.PlainTime.from(time);
     const zonedDateTime = plainDate.toZonedDateTime({
@@ -71,10 +87,10 @@
     });
 
     const dateTime = zonedDateTime.toInstant().toString();
-    prepareEvent(dateTime);
+    prepareEvent({ title, dateTime });
   }
 
-  function prepareEvent(dateTime) {
+  function prepareEvent({ title, dateTime }) {
     const client = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -82,13 +98,15 @@
         console.log(tokenResponse);
         console.log("access token");
         gapi.client.setApiKey(API_KEY);
-        gapi.client.load("youtube", "v3", () => insertEvent(dateTime));
+        gapi.client.load("youtube", "v3", () =>
+          insertEvent({ title, dateTime })
+        );
       },
     });
     client.requestAccessToken();
   }
 
-  function insertEvent(dateTime) {
+  function insertEvent({ title, dateTime }) {
     console.log("inserting event");
 
     gapi.client.setApiKey(API_KEY);
@@ -97,16 +115,14 @@
         part: ["id", "snippet", "contentDetails", "status"],
         resource: {
           snippet: {
-            title: "Eccles Park Ward Sacrament Meeting",
+            title: title,
             scheduledStartTime: dateTime,
           },
           contentDetails: {
             enableClosedCaptions: true,
-            enableContentEncryption: true,
             enableDvr: true,
-            enableEmbed: true,
+            enableEmbed: false,
             recordFromStart: true,
-            startWithSlate: true,
           },
           status: {
             privacyStatus: "unlisted",
@@ -114,24 +130,34 @@
           },
         },
       })
-      .then(
-        function (response) {
-          console.log(response);
-          const videoLink = prepareVideoLinkFromId(response.result.id);
-          meeting_info.innerHTML = `<h3>Meeting scheduled:</h3> <a href="${videoLink}">${videoLink}</a> <img onclick="copyLinkToClipboard('${videoLink}')" src="/images/copy-svgrepo-com.svg" alt="Copy Icon" style="cursor: pointer; width: 20px; height: 20px;" />
+      .then((response) => bindEventToStream(response.result.id, STREAM_ID))
+      .then(function (response) {
+        console.log(response);
+        const videoLink = prepareVideoLinkFromId(response.result.id);
+        meeting_info.innerHTML = `<h3>Meeting scheduled:</h3> <a href="${videoLink}">${videoLink}</a> <img onclick="copyLinkToClipboard('${videoLink}')" src="/images/copy-svgrepo-com.svg" alt="Copy Icon" style="cursor: pointer; width: 20px; height: 20px;" />
           <p>Copy the above link and paste it into <a href="${EDIT_WEEK_LINK}" target="_blank">Github</a>.</p>`;
-          meeting_info.style.display = "block";
+        meeting_info.style.display = "block";
 
-          if (response.result.snippet.channelId !== CHANNEL_ID) {
-            alert("Wrong Channel!");
-          }
-
-          console.log(response);
-        },
-        function (reason) {
-          console.log("Error: " + reason.result.error.message);
+        if (response.result.snippet.channelId !== CHANNEL_ID) {
+          alert("Wrong Channel!");
         }
-      );
+
+        console.log(response);
+      })
+      .catch((reason) => console.log("Error: " + reason.result.error.message));
+  }
+
+  function bindEventToStream(eventId, streamId) {
+    return gapi.client.youtube.liveBroadcasts
+      .bind({
+        id: eventId,
+        part: "id,contentDetails,snippet,status",
+        streamId: streamId,
+      })
+      .then(function (response) {
+        console.log("Event bound to stream:", response);
+        return response;
+      });
   }
 
   function prepareVideoLinkFromId(videoId) {
