@@ -55,6 +55,7 @@ jobs:
           HUGO_CLIENT_ID: ${{ secrets.HUGO_CLIENT_ID }}
           HUGO_API_KEY: ${{ secrets.HUGO_API_KEY }}
           HUGO_CHANNEL_ID: ${{ secrets.HUGO_CHANNEL_ID }}
+          HUGO_STREAM_ID: ${{ secrets.HUGO_STREAM_ID }}
         run: |
           hugo \
             --minify \
