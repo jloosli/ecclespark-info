@@ -51,7 +51,7 @@
   const meeting_info = document.querySelector("#meetingInformation");
   meeting_form.addEventListener("submit", onSubmit);
 
-  window.onload = login;
+  window.addEventListener('load', login);
 
   function login() {
     google.accounts.id.initialize({
