@@ -1,9 +1,31 @@
+<style>
+  #calendar_select,
+  #meetingInformation {
+    display: none;
+  }
+  #user_img {
+    display: inline-block;
+    margin-left: 1em;
+  }
+  .user_img img {
+    border-radius: 50%;
+    height: 50px;
+  }
+
+  input#title {
+    width: 400px;
+  }
+
+  form div {
+    margin: 1rem;
+  }
+</style>
 <div id="google_btn"></div>
-<div id="calendar_select" style="display: none">
+<div id="calendar_select">
   <h2>
     Logged In: <span class="name"></span>
-    <div style="display: inline-block; margin-left: 1em">
-      <img class="pic" src="" style="border-radius: 50%; height: 50px" />
+    <div id="user_img">
+      <img class="pic" src="" />
     </div>
   </h2>
   <form id="meeting_form">
@@ -18,13 +40,19 @@
         required
       />
     </div>
-    <input type="date" name="date" required />
-    <input type="time" name="time" required value="10:00" />
-    <button type="submit">Submit</button>
+    <div>
+      <label for="date">Date: </label>
+      <input type="date" name="date" required />
+    </div>
+    <div>
+      <label for="time">Time: </label>
+      <input type="time" name="time" required value="10:00" />
+    </div>
+    <div><button type="submit">Submit</button></div>
   </form>
   <div.err></div.err>
 </div>
-<div id="meetingInformation" style="display: none">
+<div id="meetingInformation">
   <h3>Meeting Added:</h3>
   <pre></pre>
 </div>
@@ -46,12 +74,12 @@
   const google_btn = document.getElementById("google_btn");
   const calendar_select = document.getElementById("calendar_select");
   const cs_name = calendar_select.querySelector(".name");
-  const cs_pic = calendar_select.querySelector(".pic");
+  const cs_pic = calendar_select.querySelector("#user_img .pic");
   const meeting_form = calendar_select.querySelector("#meeting_form");
   const meeting_info = document.querySelector("#meetingInformation");
   meeting_form.addEventListener("submit", onSubmit);
 
-  window.addEventListener('load', login);
+  window.addEventListener("load", login);
 
   function login() {
     google.accounts.id.initialize({
