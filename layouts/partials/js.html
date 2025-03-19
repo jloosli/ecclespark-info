@@ -13,3 +13,16 @@
     {{ end }}
   {{ end }}
 {{ end }}
+
+{{ if eq .Layout "react" }}
+  {{ with resources.Get "apps/broadcast-setup-app/index.ts"}}
+    {{ $shims := dict }}
+    {{ $defines := dict }}
+    {{ $params := partial "partials/params.html" }}
+    {{ if  hugo.IsDevelopment }}
+      {{ $defines = dict "process.env.NODE_ENV" `"development"` }}
+    {{ end }}
+    {{ $js := . | js.Build (dict "shims" $shims "defines" $defines "params" $params ) }}
+    <script src="{{ $js.RelPermalink }}"></script>
+  {{ end }}
+{{ end }}
