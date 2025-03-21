@@ -56,6 +56,10 @@ jobs:
           HUGO_API_KEY: ${{ secrets.HUGO_API_KEY }}
           HUGO_CHANNEL_ID: ${{ secrets.HUGO_CHANNEL_ID }}
           HUGO_STREAM_ID: ${{ secrets.HUGO_STREAM_ID }}
+          HUGO_API_PROJECT_ID: ${{ secrets.HUGO_API_PROJECT_ID }}
+          HUGO_AIRTABLE_READ_WRITE_TOKEN: ${{ secrets.HUGO_AIRTABLE_READ_WRITE_TOKEN }}
+          HUGO_AIRTABLE_READ_TOKEN: ${{ secrets.HUGO_AIRTABLE_READ_TOKEN }}
+          HUGO_AIRTABLE_BASE: ${{ secrets.HUGO_AIRTABLE_BASE }}
         run: |
           hugo \
             --minify \

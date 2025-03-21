@@ -1,9 +1,10 @@
 {{- define "main" -}}
 <main class="main">
-  <section class="announcements">
-    {{.Content}}
+  <section class="announcements">{{.Content}}</section>
+  <section class="broadcasts">
+    <div id="broadcast-list"></div>
   </section>
-  {{- range $week := $.Site.Data.week -}}
+  <!-- {{- range $week := $.Site.Data.week -}}
   <section class="dateSection">
     <h2>Online meetings for {{ dateFormat "Monday, Jan 2, 2006" .date }}</h2>
     <div class="cards">
@@ -22,6 +23,6 @@
       {{- end -}}
     </div>
   </section>
-{{- end -}}
+{{- end -}} -->
 </main>
 {{- end -}}

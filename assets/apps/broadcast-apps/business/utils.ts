@@ -1,3 +1,5 @@
+import { Temporal } from "temporal-polyfill";
+
 function decodeJwtResponse(token) {
     var base64Url = token.split(".")[1];
     var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -22,4 +24,10 @@ function decodeJwtResponse(token) {
         console.error("Could not copy link: ", err);
       });
   }
-  export {decodeJwtResponse, copyLinkToClipboard}
+
+  const localFormat = (dateString) => {
+      return Temporal.Instant.from(dateString)
+        .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+        .toLocaleString();
+    };
+  export {decodeJwtResponse, copyLinkToClipboard, localFormat}

@@ -3,7 +3,7 @@
 {{ .Title }} &ndash; {{ .Site.Title }} {{ end }} {{ define "main" }}
 <main class="main react">
   <h1>{{ .Title }}</h1>
-  <div id="app"></div>
   {{ .Content }}
+  <div id="app" class="broadcast-setup-app"></div>
 </main>
 {{ end }}

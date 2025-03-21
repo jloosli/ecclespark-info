@@ -1,7 +1,7 @@
 import React from "react";
 import params from "@params";
-import { generateVideoLinkFromId } from "../data/create-youtube-broadcast";
-import { copyLinkToClipboard } from "../business/utils";
+import { generateVideoLinkFromId } from "../../data/create-youtube-broadcast";
+import { copyLinkToClipboard } from "../../business/utils";
 
 const ShowCreatedVideo = ({ videoId }) => {
   const videoLink = generateVideoLinkFromId(videoId);

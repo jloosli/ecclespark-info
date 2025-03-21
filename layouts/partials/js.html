@@ -14,8 +14,7 @@
   {{ end }}
 {{ end }}
 
-{{ if eq .Layout "react" }}
-  {{ with resources.Get "apps/broadcast-setup-app/index.ts"}}
+  {{ with resources.Get "apps/broadcast-apps/index.ts"}}
     {{ $shims := dict }}
     {{ $defines := dict }}
     {{ $params := partial "partials/params.html" }}
@@ -25,4 +24,3 @@
     {{ $js := . | js.Build (dict "shims" $shims "defines" $defines "params" $params ) }}
     <script src="{{ $js.RelPermalink }}"></script>
   {{ end }}
-{{ end }}

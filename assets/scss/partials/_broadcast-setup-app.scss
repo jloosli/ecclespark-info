@@ -32,4 +32,22 @@
             height: 20px;
         }
     }
+
+    .broadcast-list {
+        table {
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: var(--primary-color-dark) 1px solid;
+            padding: 0.5em;
+        }
+
+        td:first-child {
+            text-align: center;
+            font-weight: 700;
+        }
+    }
 }

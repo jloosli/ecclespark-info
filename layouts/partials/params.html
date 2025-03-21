@@ -6,6 +6,8 @@
     "EDIT_WEEK_LINK" "https://github.com/jloosli/ecclespark-info/edit/main/data/week.yml"
     "API_BASE" "https://firestore.googleapis.com/v1/projects/"
     "API_PROJECT_ID" (getenv "HUGO_API_PROJECT_ID")
+    "AIRTABLE_READ_WRITE_TOKEN" (getenv "HUGO_AIRTABLE_READ_WRITE_TOKEN" )
+    "AIRTABLE_BASE" (getenv "HUGO_AIRTABLE_BASE")
 }}
 {{ with $params }}
 {{ $params = merge $params (dict "API_URL" (printf "%s%s/databases/(default)/documents/streams?key=%s" .API_BASE .API_PROJECT_ID .API_KEY) ) }}
