@@ -19,7 +19,7 @@ const base = new Airtable({ apiKey: params.AIRTABLE_READ_WRITE_TOKEN }).base(
 
 function getBroadcasts(params: QueryParams<FieldSet> = {}) {
   const defaultParams: QueryParams<FieldSet> = {
-    filterByFormula: `{date_time_scheduled} >= TODAY()`,
+    filterByFormula: `{date_time_scheduled} >= DATEADD(TODAY(), -1, 'days')`,
     sort: [{ field: "date_time_scheduled", direction: "asc" }],
   };
 
