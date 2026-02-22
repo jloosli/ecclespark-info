@@ -84,10 +84,10 @@ These are passed through Hugo's template system to the client-side React app.
 - No test framework is configured — manual verification is expected
 
 ### Styling
-- Tailwind CSS for utility classes (source: `css/tailwind.css`, output: `public/build/tailwind.css`)
-- SCSS for component styles under `assets/scss/`
-- Color palette defined in `assets/scss/_palette.scss` (accent: `#3F51B5`)
-- Run `npm run build` after changing Tailwind source
+- SCSS for all styling under `assets/scss/`
+- Hugo's built-in SCSS compiler processes `assets/scss/style.scss` into CSS
+- Color palette defined in `assets/scss/_palette.scss` (primary: `#3F51B5`, accent: `#4CAF50`)
+- Styles are automatically rebuilt on Hugo server restart or rebuild
 
 ### Data Updates (Weekly)
 - Update `data/week.yml` each week: set `date`, `odd`/`even`, and `sacrament` YouTube link
