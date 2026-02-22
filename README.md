@@ -15,11 +15,10 @@
 
 1. Set up camera, cables, etc.
 2. Start the Mevo Camera broadcast (cellphone)
-3. Lot in to [Youtube Studio](https://studio.youtube.com/channel/UCbq1hkTjdy6dKzQmbLDQk9g/livestreaming) to bring up the sacrament 
-   meeting feed (laptop)
+3. Log in to [Youtube Studio](https://studio.youtube.com/channel/UCbq1hkTjdy6dKzQmbLDQk9g/livestreaming) to bring up the sacrament meeting feed (laptop)
 4. Start the broadcast when the meeting starts
 5. Stop the Mevo Camera feed during the Sacrament
-6. Start the Mevoa Camera feed after the Sacrament
+6. Start the Mevo Camera feed after the Sacrament
 7. At the end of the meeting, shut down in reverse order (remember that the broadcast from Youtube is delayed, so check the laptop for when to stop)
    1. Stop Youtube Broadcast (laptop)
    2. Stop Mevo Broadcast (cell phone)
