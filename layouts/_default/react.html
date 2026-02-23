@@ -1,9 +1,8 @@
-{{ define "title" }}
-<!-- This will override the default value set in baseof.html; i.e., "{{ .Site.Title }}" in the original example-->
-{{ .Title }} &ndash; {{ .Site.Title }} {{ end }} {{ define "main" }}
-<main class="main react">
+{{ define "title" }}{{ .Title }} &ndash; {{ .Site.Title }}{{ end }}
+{{ define "main" }}
+<main class="max-w-4xl mx-auto px-4 py-6">
   <h1>{{ .Title }}</h1>
   {{ .Content }}
-  <div id="app" class="broadcast-setup-app"></div>
+  <div id="app"></div>
 </main>
 {{ end }}

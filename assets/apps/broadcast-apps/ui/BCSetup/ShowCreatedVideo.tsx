@@ -7,18 +7,18 @@ const ShowCreatedVideo = ({ videoId }) => {
   const videoLink = generateVideoLinkFromId(videoId);
   const handleCopyClick = () => copyLinkToClipboard(videoLink);
   return (
-    <div id="show-created-video">
+    <div className="my-4">
       <h3>Meeting scheduled:</h3>
       <a href={videoLink}>{videoLink}</a>&nbsp;
       <img
         onClick={handleCopyClick}
         src="/images/copy-svgrepo-com.svg"
         alt="Copy Icon"
-        className="copy-icon"
+        className="inline-block cursor-pointer w-5 h-5"
         title="Copy to clipboard"
       />
       <p>
-        Copy the above link and paste it into&nbsp; 
+        Copy the above link and paste it into&nbsp;
         <a href={params.EDIT_WEEK_LINK} target="_blank">
           Github
         </a>

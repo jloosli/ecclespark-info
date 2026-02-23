@@ -17,7 +17,7 @@
   {{ with resources.Get "apps/broadcast-apps/index.ts"}}
     {{ $shims := dict }}
     {{ $defines := dict }}
-    {{ $params := partial "partials/params.html" }}
+    {{ $params := partial "params.html" }}
     {{ if  hugo.IsDevelopment }}
       {{ $defines = dict "process.env.NODE_ENV" `"development"` }}
     {{ end }}

@@ -9,8 +9,7 @@ Guidelines for AI agents working in this repository.
 **Tech stack:**
 - Hugo (static site generator, Go-based)
 - React 19 + TypeScript 5.8 (compiled via Hugo's asset pipeline)
-- Tailwind CSS (compiled via PostCSS)
-- SCSS for additional styling
+- Tailwind CSS v4 (compiled via PostCSS — no SCSS/Sass dependency)
 - Firebase Hosting (production)
 - GitHub Pages (alternative deployment)
 
@@ -23,7 +22,7 @@ Guidelines for AI agents working in this repository.
 │   │   ├── ui/                # React components
 │   │   ├── business/          # Utility functions
 │   │   └── data/              # API calls (YouTube, Airtable)
-│   └── scss/                  # SCSS stylesheets
+│   └── css/                   # Tailwind CSS entry point (app.css)
 ├── content/                   # Hugo content (Markdown)
 │   ├── _index.md              # Main announcements page
 │   └── setup.md               # Setup instructions
@@ -84,10 +83,13 @@ These are passed through Hugo's template system to the client-side React app.
 - No test framework is configured — manual verification is expected
 
 ### Styling
-- SCSS for all styling under `assets/scss/`
-- Hugo's built-in SCSS compiler processes `assets/scss/style.scss` into CSS
-- Color palette defined in `assets/scss/_palette.scss` (primary: `#3F51B5`, accent: `#4CAF50`)
-- Styles are automatically rebuilt on Hugo server restart or rebuild
+- **Tailwind CSS v4** is the single styling system — no SCSS/Sass dependency
+- `assets/css/app.css` is the only CSS entry point; it defines `@theme` (custom palette), `@source` paths for Tailwind scanning, and `@layer base` for typography resets
+- Apply styles using Tailwind utility classes directly in Hugo templates (`.html`) and React components (`.tsx`)
+- **Color palette**: deep warm slate primary (`oklch(28% 0.05 250)`), sky-blue accent (`oklch(62% 0.17 220)`)
+- **Dark mode**: `prefers-color-scheme` via Tailwind `dark:` prefixes — no extra config needed
+- Hugo processes `assets/css/app.css` via `css.PostCSS` (with `@tailwindcss/postcss` plugin)
+- Styles rebuild automatically on `hugo server` or `hugo build`
 
 ### Data Updates (Weekly)
 - Update `data/week.yml` each week: set `date`, `odd`/`even`, and `sacrament` YouTube link
@@ -96,7 +98,7 @@ These are passed through Hugo's template system to the client-side React app.
 ## Deployment
 
 Pushes to `main` trigger GitHub Actions (`.github/workflows/`) which:
-1. Install Hugo 0.140.2, Dart Sass, Node deps
+1. Install Hugo 0.140.2, Node deps (no Dart Sass required)
 2. Build the site with Hugo
 3. Deploy to GitHub Pages and Firebase Hosting
 

@@ -2,8 +2,8 @@ import React from "react";
 
 function LookingForBroadcasts() {
   return (
-    <div className="looking-for-broadcasts">
-      <h2>Looking for broadcasts...</h2>
+    <div className="py-12 text-center text-slate-500 dark:text-slate-400">
+      <p className="text-lg font-medium animate-pulse">Looking for broadcasts…</p>
     </div>
   );
 }
