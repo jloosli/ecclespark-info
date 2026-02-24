@@ -52,9 +52,6 @@ docker compose up server
 
 # Build production site
 docker compose up build
-
-# Build Tailwind CSS (run when changing css/tailwind.css)
-npm run build
 ```
 
 The dev server runs at `http://localhost:1313`.
