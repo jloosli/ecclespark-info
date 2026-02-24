@@ -8,7 +8,7 @@ const ShowCreatedVideo = ({ videoId }) => {
   const handleCopyClick = () => copyLinkToClipboard(videoLink);
   return (
     <div className="my-4">
-      <h3>Meeting scheduled:</h3>
+      <h3 className="text-slate-900 dark:text-slate-100">Meeting scheduled:</h3>
       <a href={videoLink}>{videoLink}</a>&nbsp;
       <img
         onClick={handleCopyClick}
