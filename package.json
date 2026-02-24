@@ -5,18 +5,16 @@
   "author": "Jared Loosli <jloosli@gmail.com>",
   "license": "MIT",
   "private": true,
-  "scripts": {
-    "build": "postcss css/tailwind.css -o public/build/tailwind.css"
-  },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
     "@types/gapi": "^0.0.47",
     "@types/google.accounts": "^0.0.15",
     "airtable": "^0.12.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
-    "postcss-cli": "^11.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "tailwindcss": "^4.2.0",
     "temporal-polyfill": "^0.2.5",
     "typescript": "^5.8.2"
   }

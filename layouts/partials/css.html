@@ -1,17 +1,9 @@
 {{- $inServerMode := hugo.IsServer -}}
-{{- $sass         := resources.Get "scss/style.scss" -}}
-{{- $sassIncludes := (slice  ) -}}
-{{- $cssTarget    := "css/styles.css" -}}
-{{- $cssOpts      := cond ($inServerMode) (dict "targetPath" $cssTarget "enableSourceMap" true "includePaths" $sassIncludes) (dict "targetPath" $cssTarget "outputStyle" "compressed" "includePaths" $sassIncludes) -}}
-
-{{- $css := $sass | resources.ExecuteAsTemplate "main.scss" . | toCSS $cssOpts -}}
-{{- if or ($inServerMode) (eq .Site.Params.env "LOCAL") -}}
-<link rel="stylesheet" href="{{ $css.Permalink | absURL }}" media="screen">
-
+{{- if $inServerMode -}}
+{{- $tw := resources.Get "css/app.css" | css.PostCSS -}}
+<link rel="stylesheet" href="{{ $tw.Permalink | absURL }}" media="screen">
 {{- else -}}
-
-{{- $secureCss := $sass | resources.ExecuteAsTemplate "main.scss" . | toCSS $cssOpts | css.PostCSS | fingerprint -}}
-<link rel="stylesheet" href="{{ $secureCss.Permalink | absURL }}" integrity="{{ $secureCss.Data.Integrity }}"
-      media="screen">
-
+{{- $tw := resources.Get "css/app.css" | css.PostCSS | fingerprint -}}
+<link rel="stylesheet" href="{{ $tw.Permalink | absURL }}"
+      integrity="{{ $tw.Data.Integrity }}" media="screen">
 {{- end -}}
