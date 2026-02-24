@@ -10,21 +10,21 @@ function BroadcastList(props) {
       <table className="w-full max-w-3xl border-collapse">
         <thead>
           <tr>
-            <th className="border border-slate-600 px-3 py-2 text-left">ID</th>
-            <th className="border border-slate-600 px-3 py-2 text-left">Scheduled</th>
-            <th className="border border-slate-600 px-3 py-2 text-left">Created</th>
+            <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left">ID</th>
+            <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left">Scheduled</th>
+            <th className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-left">Created</th>
           </tr>
         </thead>
         <tbody>
           {props.broadcasts?.map((broadcast, index) => (
             <tr key={index}>
-              <td className="border border-slate-600 px-3 py-2 text-center font-bold">
+              <td className="border border-slate-300 dark:border-slate-600 px-3 py-2 text-center font-bold">
                 {broadcast.id}
               </td>
-              <td className="border border-slate-600 px-3 py-2">
+              <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
                 {localFormat(broadcast.date_time_scheduled)}
               </td>
-              <td className="border border-slate-600 px-3 py-2">
+              <td className="border border-slate-300 dark:border-slate-600 px-3 py-2">
                 {localFormat(broadcast.created_at)}
               </td>
             </tr>
