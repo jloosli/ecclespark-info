@@ -12,7 +12,7 @@ const CalendarSelect = ({ handleBroadcastForm }) => {
   return (
     <>
       <form id="meeting_form" action={setMeeting} className="space-y-4">
-        <h3>Add Meeting:</h3>
+        <h3 className="text-slate-900 dark:text-slate-100">Add Meeting:</h3>
         <div className="flex items-center gap-3">
           <label htmlFor="title" className="w-12 shrink-0">Title:</label>
           <input
