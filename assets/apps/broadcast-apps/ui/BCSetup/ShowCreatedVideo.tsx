@@ -19,7 +19,7 @@ const ShowCreatedVideo = ({ videoId }) => {
       />
       <p>
         Copy the above link and paste it into&nbsp;
-        <a href={params.EDIT_WEEK_LINK} target="_blank">
+        <a href={params.EDIT_WEEK_LINK} target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
         .
