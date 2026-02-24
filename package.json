@@ -5,7 +5,6 @@
   "author": "Jared Loosli <jloosli@gmail.com>",
   "license": "MIT",
   "private": true,
-  "scripts": {},
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.0",
     "@types/gapi": "^0.0.47",
