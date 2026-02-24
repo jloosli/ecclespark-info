@@ -6,7 +6,7 @@ function BroadcastList(props) {
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold mb-3">Broadcasts</h2>
+      <h2 className="text-xl font-bold mb-3 dark:text-slate-100">Broadcasts</h2>
       <table className="w-full max-w-3xl border-collapse">
         <thead>
           <tr>
