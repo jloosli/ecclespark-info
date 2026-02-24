@@ -109,3 +109,35 @@ Do not push directly to `main` for experimental changes — use feature branches
 - **Firebase Hosting** — production hosting at https://ecclespark.info/
 
 Credentials must never be committed to the repository. Use `.env` locally and GitHub Actions secrets for CI/CD.
+
+## Cursor Cloud specific instructions
+
+### System dependencies
+
+Hugo extended v0.140.2 must be installed separately (not available via npm). Install with:
+```
+wget -q https://github.com/gohugoio/hugo/releases/download/v0.140.2/hugo_extended_0.140.2_linux-amd64.deb && sudo dpkg -i hugo_extended_0.140.2_linux-amd64.deb
+```
+
+### Running the dev server (without Docker)
+
+In the Cloud VM, run Hugo natively instead of via Docker:
+```bash
+hugo server --bind 0.0.0.0 --port 1313
+```
+The `.env` file must exist (copy from `.env.example` if needed); placeholder values are fine for building/serving the site. The React broadcast features (YouTube API, Airtable) won't function without real credentials, but the site builds and renders correctly.
+
+### Lint / type-checking
+
+`npx tsc --noEmit` reports pre-existing errors (missing DOM lib, `@types/react`, `@types/react-dom`, and Hugo's virtual `@params` module). These do **not** block the Hugo build — Hugo's `js.Build` handles TypeScript/JSX compilation independently.
+
+### Build
+
+```bash
+hugo                          # production build
+hugo --environment development  # development build
+```
+
+### No automated test framework
+
+This project has no test runner. Manual verification via the browser is the expected workflow (see "Key Conventions > React Components" above).
