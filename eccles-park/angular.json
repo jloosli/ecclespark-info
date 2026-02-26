@@ -2,8 +2,12 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
+<<<<<<< HEAD
     "packageManager": "npm",
     "analytics": "9bf97a86-ca5f-4461-a56f-92f5967fb483"
+=======
+    "packageManager": "npm"
+>>>>>>> 53a1ded (Added Angular module)
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -22,6 +26,7 @@
             "assets": [
               {
                 "glob": "**/*",
+<<<<<<< HEAD
                 "input": "src/assets/favicon",
                 "output": "/"
               },
@@ -31,6 +36,10 @@
                 "output": "/"
               },
               "src/assets"
+=======
+                "input": "public"
+              }
+>>>>>>> 53a1ded (Added Angular module)
             ],
             "styles": [
               "src/styles.css"
@@ -46,6 +55,7 @@
           },
           "configurations": {
             "production": {
+<<<<<<< HEAD
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -58,6 +68,13 @@
                   "type": "initial",
                   "maximumWarning": "1MB",
                   "maximumError": "2MB"
+=======
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+>>>>>>> 53a1ded (Added Angular module)
                 },
                 {
                   "type": "anyComponentStyle",
@@ -71,6 +88,7 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+<<<<<<< HEAD
             },
             "test": {
               "fileReplacements": [
@@ -82,6 +100,8 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+=======
+>>>>>>> 53a1ded (Added Angular module)
             }
           },
           "defaultConfiguration": "production"
@@ -99,6 +119,7 @@
           "defaultConfiguration": "development"
         },
         "test": {
+<<<<<<< HEAD
           "builder": "@angular/build:unit-test",
           "options": {
             "buildTarget": "eccles-park:build:test",
@@ -106,8 +127,15 @@
             "runner": "vitest",
             "providersFile": "src/test-providers.ts"
           }
+=======
+          "builder": "@angular/build:unit-test"
+>>>>>>> 53a1ded (Added Angular module)
         }
       }
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 53a1ded (Added Angular module)

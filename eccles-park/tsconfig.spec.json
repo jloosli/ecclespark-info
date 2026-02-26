@@ -10,7 +10,11 @@
   },
   "include": [
     "src/**/*.d.ts",
+<<<<<<< HEAD
     "src/**/*.spec.ts",
     "src/test-providers.ts"
+=======
+    "src/**/*.spec.ts"
+>>>>>>> 53a1ded (Added Angular module)
   ]
 }

@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+<<<<<<< HEAD
 
 /* New palette — warm slate primary, sky-blue accent */
 @theme {
@@ -34,3 +35,5 @@
       max-height: 100%;
     }
   }
+=======
+>>>>>>> 53a1ded (Added Angular module)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './components/header/header';
@@ -9,3 +10,17 @@ import { Header } from './components/header/header';
   styleUrl: './app.css',
 })
 export class App {}
+=======
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('eccles-park');
+}
+>>>>>>> 53a1ded (Added Angular module)
