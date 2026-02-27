@@ -19,4 +19,25 @@ describe('Broadcasts', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should show the loading component when the app component is first created', () => {
+    const fixture = TestBed.createComponent(Broadcasts);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-loading')).toBeTruthy();
+  });
+
+  it('should not show the no results component when the app component is first created', () => {
+    const fixture = TestBed.createComponent(Broadcasts);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-no-results')).toBeFalsy();
+  });
+
+  it('should not show the results component when the app component is first created', () => {
+    const fixture = TestBed.createComponent(Broadcasts);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-results')).toBeFalsy();
+  });
 });
