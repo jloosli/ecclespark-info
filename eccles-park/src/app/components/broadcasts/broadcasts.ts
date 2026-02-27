@@ -16,7 +16,8 @@ export class Broadcasts {
     RESULTS: 'results',
   } as const;
 
-  dataState = signal<typeof this.DataState[keyof typeof this.DataState]>(
-    this.DataState.LOADING
-  );
+  dataState = signal<(typeof this.DataState)[keyof typeof this.DataState]>(this.DataState.LOADING);
+
+  constructor() {
+  }
 }
