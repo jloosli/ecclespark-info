@@ -2,6 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { BroadcastForm } from './broadcast-form';
 
 describe('BroadcastForm', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [BroadcastForm],
+    }).compileComponents();
+  });
   it('should create', () => {
     const fixture = TestBed.createComponent(BroadcastForm);
     expect(fixture.componentInstance).toBeTruthy();
