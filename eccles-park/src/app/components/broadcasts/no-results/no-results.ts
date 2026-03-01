@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   template: `<h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
     No upcoming broadcasts are scheduled
   </h2>`,
-  styles: '',
+  styles: [],
 })
 export class NoResults {}
