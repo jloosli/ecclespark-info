@@ -1,9 +1,9 @@
 <main class="max-w-4xl mx-auto px-4 py-6">
-  @if (dataState() === DataState.LOADING) { 
-  <app-loading></app-loading>
-  } @else if (dataState() === DataState.NO_RESULTS) {
-  <app-no-results></app-no-results>
-  } @else if (dataState() === DataState.RESULTS) {
-  <app-results></app-results>
+  @if (dataState() === 'loading') {
+    <app-loading></app-loading>
+  } @else if (dataState() === 'no-results') {
+    <app-no-results></app-no-results>
+  } @else if (dataState() === 'results') {
+    <app-results [streams]="streams()!"></app-results>
   }
 </main>

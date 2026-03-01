@@ -12,6 +12,7 @@ describe('Results', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(Results);
+    fixture.componentRef.setInput('streams', []);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
