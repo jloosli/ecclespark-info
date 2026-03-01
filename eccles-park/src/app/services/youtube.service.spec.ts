@@ -33,7 +33,7 @@ describe('YoutubeService', () => {
       ],
     });
     const service = TestBed.inject(YoutubeService);
-    
+
     expect(() => {
       service.createBroadcast(
         { title: 'Test', scheduledStartTime: new Date() },
