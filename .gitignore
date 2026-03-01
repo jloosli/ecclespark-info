@@ -1,8 +1,10 @@
 node_modules
-public/
+/dist
+/tmp
+/.angular
 .idea
-resources
 .firebaserc
 *.lock
 .env
+.DS_Store
 .claude/worktrees/

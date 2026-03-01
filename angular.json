@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "eccles-park": {
+    "app": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -90,10 +90,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "eccles-park:build:production"
+              "buildTarget": "app:build:production"
             },
             "development": {
-              "buildTarget": "eccles-park:build:development"
+              "buildTarget": "app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -101,7 +101,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "eccles-park:build:test",
+            "buildTarget": "app:build:test",
             "tsConfig": "tsconfig.spec.json",
             "runner": "vitest",
             "providersFile": "src/test-providers.ts"
