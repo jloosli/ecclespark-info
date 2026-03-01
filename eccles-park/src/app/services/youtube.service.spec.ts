@@ -25,4 +25,20 @@ describe('YoutubeService', () => {
       (service as unknown as { loadScripts: () => Promise<void> }).loadScripts(),
     ).resolves.toBeUndefined();
   });
+
+  it('should throw error when createBroadcast is called on server', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'server' },
+      ],
+    });
+    const service = TestBed.inject(YoutubeService);
+    
+    expect(() => {
+      service.createBroadcast(
+        { title: 'Test', scheduledStartTime: new Date() },
+        'fake-token'
+      );
+    }).toThrow('createBroadcast can only be called in browser context');
+  });
 });
