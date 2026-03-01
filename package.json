@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "node scripts/inject-env.js && ng build",
+    "build": "ng build",
     "build:prod": "node scripts/inject-env.js && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
