@@ -71,6 +71,9 @@ export class YoutubeService {
   }
 
   createBroadcast(params: CreateBroadcastParams, accessToken: string): Observable<BroadcastResult> {
+    if (!isPlatformBrowser(this.platformId)) {
+      throw new Error('createBroadcast can only be called in browser context');
+    }
     return from(this.loadScripts()).pipe(
       switchMap(() => from(this.doCreateBroadcast(params, accessToken))),
     );
