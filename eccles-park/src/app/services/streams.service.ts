@@ -24,8 +24,12 @@ export class StreamsService {
       return EMPTY;
     }
 
+    if (!db) {
+      throw new Error('Firebase Firestore is not initialized');
+    }
+
     const activeQuery = query(
-      collection(db!, 'streams'),
+      collection(db, 'streams'),
       where('status', 'in', ['SCHEDULED', 'LIVE']),
       orderBy('scheduled_at', 'desc'),
     );
@@ -56,7 +60,12 @@ export class StreamsService {
     if (!isPlatformBrowser(this.platformId)) {
       throw new Error('Cannot write to Firestore on the server');
     }
-    const docRef = await addDoc(collection(db!, 'streams'), {
+
+    if (!db) {
+      throw new Error('Firebase Firestore is not initialized');
+    }
+
+    const docRef = await addDoc(collection(db, 'streams'), {
       title: data.title,
       youtube_id: data.youtubeId,
       scheduled_at: Timestamp.fromDate(data.scheduledAt),
