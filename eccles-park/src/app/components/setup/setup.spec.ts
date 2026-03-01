@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
+import { of } from 'rxjs';
 import { Setup } from './setup';
 import { AuthService } from '../../services/auth.service';
 import { YoutubeService } from '../../services/youtube.service';
@@ -24,7 +25,7 @@ describe('Setup', () => {
   };
 
   const mockStreamsService = {
-    getActiveStreams: () => ({ pipe: () => ({}) }),
+    getActiveStreams: () => of([]),
     createStream: async () => 'doc-id',
   };
 
