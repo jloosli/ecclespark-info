@@ -26,7 +26,7 @@ export class Card {
   });
 
   youtubeUrl = computed(() => {
-    const id = this.stream().stream_id;
+    const id = this.stream().youtube_id ?? this.stream().stream_id;
     return id ? `https://youtube.com/live/${id}` : null;
   });
 

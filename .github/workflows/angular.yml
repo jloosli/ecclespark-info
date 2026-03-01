@@ -1,30 +1,15 @@
 name: Angular Build & Deploy
 
-# Runs after the Hugo workflow completes so we can merge both outputs
-# before deploying to Firebase Hosting.
 on:
-  workflow_run:
-    workflows: ["Build and Deploy site to both Github pages and Firebase"]
-    types: [completed]
+  push:
     branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    # Only proceed if the Hugo workflow succeeded
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
-
-      # Pull the Hugo-built public/ directory from the triggering workflow run
-      - name: Download Hugo artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: public-dir
-          path: ./public
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -43,11 +28,15 @@ jobs:
           NG_FIREBASE_AUTH_DOMAIN: ${{ secrets.NG_FIREBASE_AUTH_DOMAIN }}
           NG_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NG_FIREBASE_MESSAGING_SENDER_ID }}
           NG_FIREBASE_APP_ID: ${{ secrets.NG_FIREBASE_APP_ID }}
+          NG_YOUTUBE_CLIENT_ID: ${{ secrets.NG_YOUTUBE_CLIENT_ID }}
+          NG_YOUTUBE_API_KEY: ${{ secrets.NG_YOUTUBE_API_KEY }}
+          NG_YOUTUBE_STREAM_ID: ${{ secrets.NG_YOUTUBE_STREAM_ID }}
         run: npx ng build --configuration production
 
-      # Merge Angular output into Hugo's public/ at the /streams/ subpath
-      - name: Copy Angular output to public/streams/
-        run: cp -r eccles-park/dist/eccles-park/browser/. public/streams/
+      - name: Prepare public directory
+        run: |
+          mkdir -p public
+          cp -r eccles-park/dist/eccles-park/browser/. public/
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
