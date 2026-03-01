@@ -22,4 +22,9 @@ export const environment = {
     apiKey: getEnv('NG_YOUTUBE_API_KEY'),
     streamId: getEnv('NG_YOUTUBE_STREAM_ID'),
   },
+  youtube: {
+    clientId: process.env['NG_YOUTUBE_CLIENT_ID'] ?? '',
+    apiKey: process.env['NG_YOUTUBE_API_KEY'] ?? '',
+    streamId: process.env['NG_YOUTUBE_STREAM_ID'] ?? '',
+  },
 };
