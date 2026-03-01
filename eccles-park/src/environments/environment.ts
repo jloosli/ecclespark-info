@@ -9,8 +9,8 @@ export const environment = {
     appId: '1:634730540408:web:51e6c9a55592fcf7a92c8d',
   },
   youtube: {
-    clientId: 'DEV_CLIENT_ID',
-    apiKey: 'DEV_API_KEY',
-    streamId: 'STREAM_ID',
+    clientId: '634730540408-pvfjdlb2kbf1b7uvo2hrhrj8u7jebotd.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDu30BQie4_48-r3BWXC-yLIjxz537c9Hg',
+    streamId: 'bq1hkTjdy6dKzQmbLDQk9g1605463980504890',
   },
 };
