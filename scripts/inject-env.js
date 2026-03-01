@@ -1,9 +1,27 @@
 #!/usr/bin/env node
 
 /**
- * Injects environment variables into angular.json's production build configuration.
- * This script modifies angular.json to add a "define" section with the current
- * environment variable values as string literals.
+ * Environment Variable Injection Script
+ * 
+ * This script solves the problem of making Node.js environment variables available
+ * in the browser bundle at runtime. Since process.env is not available in the browser,
+ * we use Angular's "define" option to replace declared constants with literal values
+ * at build time.
+ * 
+ * How it works:
+ * 1. Reads environment variables from process.env
+ * 2. Converts them to JSON string literals (e.g., "my-value")
+ * 3. Injects them into angular.json's production configuration "define" option
+ * 4. Angular's build process replaces the declared constants in TypeScript with these literals
+ * 
+ * Usage:
+ *   export NG_FIREBASE_API_KEY=xxx
+ *   export NG_YOUTUBE_API_KEY=yyy
+ *   node scripts/inject-env.js
+ *   ng build --configuration production
+ * 
+ * Or use the npm script:
+ *   npm run build:prod
  */
 
 const fs = require('fs');
@@ -33,7 +51,6 @@ envVars.forEach((varName) => {
     missingVars.push(varName);
   }
   // Use JSON.stringify to create a proper JavaScript string literal
-  // Empty string fallback for missing vars (error will be thrown below if critical)
   define[varName] = JSON.stringify(value || '');
 });
 
