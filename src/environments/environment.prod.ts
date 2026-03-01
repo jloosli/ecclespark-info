@@ -1,25 +1,31 @@
 /**
- * Safe env access - process.env is Node-only; undefined in browser.
- * Production builds should use angular.json "define" to inject values at build time.
+ * Production environment configuration.
+ * Build-time constants are injected via angular.json "define" option.
+ * These global constants are replaced at build time with actual environment variable values.
  */
-function getEnv(key: string): string {
-  if (typeof process === 'undefined' || !process.env) return '';
-  return process.env[key] ?? '';
-}
+
+// Global constants injected by Angular builder at build time
+declare const NG_FIREBASE_API_KEY: string;
+declare const NG_FIREBASE_AUTH_DOMAIN: string;
+declare const NG_FIREBASE_MESSAGING_SENDER_ID: string;
+declare const NG_FIREBASE_APP_ID: string;
+declare const NG_YOUTUBE_CLIENT_ID: string;
+declare const NG_YOUTUBE_API_KEY: string;
+declare const NG_YOUTUBE_STREAM_ID: string;
 
 export const environment = {
   production: true,
   firebase: {
-    apiKey: getEnv('NG_FIREBASE_API_KEY'),
-    authDomain: getEnv('NG_FIREBASE_AUTH_DOMAIN'),
+    apiKey: NG_FIREBASE_API_KEY,
+    authDomain: NG_FIREBASE_AUTH_DOMAIN,
     projectId: 'ecclespark-info',
     storageBucket: 'ecclespark-info.firebasestorage.app',
-    messagingSenderId: getEnv('NG_FIREBASE_MESSAGING_SENDER_ID'),
-    appId: getEnv('NG_FIREBASE_APP_ID'),
+    messagingSenderId: NG_FIREBASE_MESSAGING_SENDER_ID,
+    appId: NG_FIREBASE_APP_ID,
   },
   youtube: {
-    clientId: getEnv('NG_YOUTUBE_CLIENT_ID'),
-    apiKey: getEnv('NG_YOUTUBE_API_KEY'),
-    streamId: getEnv('NG_YOUTUBE_STREAM_ID'),
+    clientId: NG_YOUTUBE_CLIENT_ID,
+    apiKey: NG_YOUTUBE_API_KEY,
+    streamId: NG_YOUTUBE_STREAM_ID,
   },
 };

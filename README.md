@@ -15,11 +15,20 @@ Open `http://localhost:4200`.
 
 ## Production Build
 
+The production build injects environment variables at build time using a custom script:
+
 ```bash
-ng build --configuration production
+npm run build:prod
 ```
 
+This command:
+1. Runs `scripts/inject-env.js` to read environment variables and inject them into `angular.json`
+2. Builds the Angular app with the production configuration
+3. Replaces declared constants with actual values at compile time
+
 Output is written to `dist/app/browser/`.
+
+**Note:** Environment variables must be set before running the build. The script will warn if any required variables are missing.
 
 ## Environment Variables
 
