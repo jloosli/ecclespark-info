@@ -1,0 +1,47 @@
+name: Angular Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: eccles-park/package-lock.json
+
+      - name: Install Angular dependencies
+        working-directory: eccles-park
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Angular app
+        working-directory: eccles-park
+        env:
+          NG_FIREBASE_API_KEY: ${{ secrets.NG_FIREBASE_API_KEY }}
+          NG_FIREBASE_AUTH_DOMAIN: ${{ secrets.NG_FIREBASE_AUTH_DOMAIN }}
+          NG_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NG_FIREBASE_MESSAGING_SENDER_ID }}
+          NG_FIREBASE_APP_ID: ${{ secrets.NG_FIREBASE_APP_ID }}
+          NG_YOUTUBE_CLIENT_ID: ${{ secrets.NG_YOUTUBE_CLIENT_ID }}
+          NG_YOUTUBE_API_KEY: ${{ secrets.NG_YOUTUBE_API_KEY }}
+          NG_YOUTUBE_STREAM_ID: ${{ secrets.NG_YOUTUBE_STREAM_ID }}
+        run: npx ng build --configuration production
+
+      - name: Prepare public directory
+        run: |
+          mkdir -p public
+          cp -r eccles-park/dist/eccles-park/browser/. public/
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
+          channelId: live
+          projectId: ecclespark-info

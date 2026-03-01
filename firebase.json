@@ -1,4 +1,7 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": "public",
     "ignore": [
@@ -28,6 +31,10 @@
 
     "cleanUrls": true,
 
-    "trailingSlash": false
+    "trailingSlash": false,
+
+    "rewrites": [
+      { "source": "/**", "destination": "/index.html" }
+    ]
   }
 }

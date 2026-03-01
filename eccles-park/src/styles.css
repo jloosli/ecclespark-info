@@ -1,0 +1,36 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+/* New palette — warm slate primary, sky-blue accent */
+@theme {
+    --color-primary:       oklch(28% 0.05 250);
+    --color-primary-hover: oklch(32% 0.06 250);
+    --color-accent:        oklch(62% 0.17 220);
+  }
+  
+  /* Typography base — replaces _typography.scss */
+  @layer base {
+    body {
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background-color: theme(colors.slate.50);
+      color: theme(colors.slate.900);
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: theme(colors.slate.900);
+        color: theme(colors.slate.100);
+      }
+    }
+    h1 { font-size: 2em; font-weight: 700; }
+    h2 { font-size: 1.8em; font-weight: 700; }
+    h3 { font-size: 1.6em; font-weight: 700; }
+    h4 { font-size: 1.4em; font-weight: 700; }
+    h5 { font-size: 1.2em; font-weight: 700; }
+    img {
+      vertical-align: middle;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }

@@ -1,0 +1,30 @@
+@if (streams() === null) {
+  <p class="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+} @else if (streams()!.length === 0) {
+  <p class="text-sm text-gray-500 dark:text-gray-400">No upcoming broadcasts.</p>
+} @else {
+  <ul class="space-y-2">
+    @for (stream of streams(); track stream.id) {
+      <li
+        class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800"
+      >
+        <div>
+          <p class="font-medium dark:text-white">{{ stream.title }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ stream.scheduled_at?.toDate() | date: 'medium' }}
+          </p>
+        </div>
+        <span
+          class="rounded-full px-2 py-0.5 text-xs font-medium"
+          [class]="
+            stream.status === 'LIVE'
+              ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-700'
+          "
+        >
+          {{ stream.status }}
+        </span>
+      </li>
+    }
+  </ul>
+}
