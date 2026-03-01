@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { Card } from '../card/card';
+import { Stream } from '../../../models/stream';
 
 @Component({
   selector: 'app-results',
@@ -7,4 +8,6 @@ import { Card } from '../card/card';
   templateUrl: './results.html',
   styleUrl: './results.css',
 })
-export class Results {}
+export class Results {
+  streams = input.required<Stream[]>();
+}

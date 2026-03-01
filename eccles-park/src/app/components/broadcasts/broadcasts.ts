@@ -1,7 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NoResults } from './no-results/no-results';
 import { Results } from './results/results';
 import { Loading } from './loading/loading';
+import { StreamsService } from '../../services/streams.service';
+import { Stream } from '../../models/stream';
 
 @Component({
   selector: 'app-broadcasts',
@@ -10,14 +13,15 @@ import { Loading } from './loading/loading';
   styleUrl: './broadcasts.css',
 })
 export class Broadcasts {
-  protected readonly DataState = {
-    LOADING: 'loading',
-    NO_RESULTS: 'no results',
-    RESULTS: 'results',
-  } as const;
+  private streamsService = inject(StreamsService);
 
-  dataState = signal<(typeof this.DataState)[keyof typeof this.DataState]>(this.DataState.LOADING);
+  streams = toSignal<Stream[] | null>(this.streamsService.getActiveStreams(), {
+    initialValue: null,
+  });
 
-  constructor() {
-  }
+  dataState = computed(() => {
+    const s = this.streams();
+    if (s === null) return 'loading';
+    return s.length === 0 ? 'no-results' : 'results';
+  });
 }
