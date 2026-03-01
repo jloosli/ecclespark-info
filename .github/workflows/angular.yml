@@ -15,14 +15,12 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: eccles-park/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install Angular dependencies
-        working-directory: eccles-park
         run: npm ci --legacy-peer-deps
 
       - name: Build Angular app
-        working-directory: eccles-park
         env:
           NG_FIREBASE_API_KEY: ${{ secrets.NG_FIREBASE_API_KEY }}
           NG_FIREBASE_AUTH_DOMAIN: ${{ secrets.NG_FIREBASE_AUTH_DOMAIN }}
@@ -32,11 +30,6 @@ jobs:
           NG_YOUTUBE_API_KEY: ${{ secrets.NG_YOUTUBE_API_KEY }}
           NG_YOUTUBE_STREAM_ID: ${{ secrets.NG_YOUTUBE_STREAM_ID }}
         run: npx ng build --configuration production
-
-      - name: Prepare public directory
-        run: |
-          mkdir -p public
-          cp -r eccles-park/dist/eccles-park/browser/. public/
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
