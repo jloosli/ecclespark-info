@@ -5,6 +5,7 @@ export interface Stream {
   title: string;
   scheduled_at: Timestamp;
   status: 'SCHEDULED' | 'LIVE' | 'ENDED' | 'CANCELLED';
-  stream_id: string;
+  stream_id?: string;
+  youtube_id?: string;
   created_at?: Timestamp;
 }

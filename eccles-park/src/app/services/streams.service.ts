@@ -1,10 +1,13 @@
 import { inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import {
+  addDoc,
   collection,
   onSnapshot,
   orderBy,
   query,
+  serverTimestamp,
+  Timestamp,
   where,
 } from 'firebase/firestore';
 import { EMPTY, Observable } from 'rxjs';
@@ -43,5 +46,23 @@ export class StreamsService {
       );
       return unsubscribe;
     });
+  }
+
+  async createStream(data: {
+    title: string;
+    youtubeId: string;
+    scheduledAt: Date;
+  }): Promise<string> {
+    if (!isPlatformBrowser(this.platformId)) {
+      throw new Error('Cannot write to Firestore on the server');
+    }
+    const docRef = await addDoc(collection(db!, 'streams'), {
+      title: data.title,
+      youtube_id: data.youtubeId,
+      scheduled_at: Timestamp.fromDate(data.scheduledAt),
+      status: 'SCHEDULED',
+      created_at: serverTimestamp(),
+    });
+    return docRef.id;
   }
 }
