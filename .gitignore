@@ -11,3 +11,6 @@ node_modules
 
 # Generated environment files (contain secrets)
 src/environments/environment.prod.generated.ts
+
+# Hugo build output (may contain injected secrets)
+public/apps/
