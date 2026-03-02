@@ -1,0 +1,32 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6 dark:text-white">Broadcast Setup</h1>
+
+  @if (pageState() === 'success' && successResult()) {
+    <app-success-banner
+      [result]="successResult()!"
+      (dismissed)="onDismissSuccess()"
+      class="mb-6 block"
+    />
+  }
+
+  @if (pageState() === 'error') {
+    <div
+      role="alert"
+      class="mb-4 rounded-lg bg-red-50 p-4 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+    >
+      <p class="font-medium">Error</p>
+      <p class="text-sm">{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <app-broadcast-form
+    [disabled]="pageState() === 'submitting'"
+    (formSubmit)="onFormSubmit($event)"
+    class="mb-8 block"
+  />
+
+  <section aria-label="Upcoming broadcasts">
+    <h2 class="text-lg font-semibold mb-4 dark:text-white">Upcoming Broadcasts</h2>
+    <app-broadcast-list />
+  </section>
+</div>

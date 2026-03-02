@@ -1,12 +1,11 @@
 # AGENTS.md
 
-Guidelines for AI agents working in this repository.
-
 ## Project Overview
 
 **ecclespark.info** is a Hugo-powered church information website with embedded React applications for managing YouTube livestream broadcasts. It serves the Eccles Park Ward and integrates with Google APIs (YouTube, Google Accounts) and Airtable.
 
 **Tech stack:**
+
 - Hugo (static site generator, Go-based)
 - React 19 + TypeScript 5.8 (compiled via Hugo's asset pipeline)
 - Tailwind CSS v4 (compiled via PostCSS — no SCSS/Sass dependency)
@@ -40,6 +39,7 @@ Guidelines for AI agents working in this repository.
 ## Development Environment
 
 ### Prerequisites
+
 - Docker (recommended for local dev)
 - Node.js + npm (for CSS builds)
 - `.env` file based on `.env.example` with real API keys
@@ -59,27 +59,27 @@ The dev server runs at `http://localhost:1313`.
 ### Environment Variables
 
 Required in `.env` (see `.env.example`):
-- `HUGO_CLIENT_ID` — Google OAuth client ID
-- `HUGO_API_KEY` — Google API key
-- `HUGO_CHANNEL_ID` — YouTube channel ID
 
 These are passed through Hugo's template system to the client-side React app.
 
 ## Key Conventions
 
 ### Hugo Templates
+
 - Base layout: `layouts/_default/baseof.html`
 - React pages use `layouts/_default/react.html`
 - Partials live in `layouts/partials/`
 - Data files in `data/` are available in templates via `.Site.Data`
 
 ### React Components
+
 - All React code lives under `assets/apps/broadcast-apps/`
 - TypeScript is used throughout; keep types strict (tsconfig has `strict: true`)
 - Components go in `ui/`, API/data logic in `data/`, utilities in `business/`
 - No test framework is configured — manual verification is expected
 
 ### Styling
+
 - **Tailwind CSS v4** is the single styling system — no SCSS/Sass dependency
 - `assets/css/app.css` is the only CSS entry point; it defines `@theme` (custom palette), `@source` paths for Tailwind scanning, and `@layer base` for typography resets
 - Apply styles using Tailwind utility classes directly in Hugo templates (`.html`) and React components (`.tsx`)
@@ -89,12 +89,14 @@ These are passed through Hugo's template system to the client-side React app.
 - Styles rebuild automatically on `hugo server` or `hugo build`
 
 ### Data Updates (Weekly)
+
 - Update `data/week.yml` each week: set `date`, `odd`/`even`, and `sacrament` YouTube link
 - Update `content/_index.md` for announcements
 
 ## Deployment
 
 Pushes to `main` trigger GitHub Actions (`.github/workflows/`) which:
+
 1. Install Hugo 0.140.2, Node deps (no Dart Sass required)
 2. Build the site with Hugo
 3. Deploy to GitHub Pages and Firebase Hosting
