@@ -22,13 +22,17 @@ npm run build:prod
 ```
 
 This command:
-1. Runs `scripts/inject-env.js` to read environment variables and inject them into `angular.json`
-2. Builds the Angular app with the production configuration
-3. Replaces declared constants with actual values at compile time
+1. Runs `scripts/inject-env.js` to generate `environment.prod.generated.ts` with actual environment values
+2. The generated file is used via Angular's `fileReplacements` during production build
+3. The generated file is gitignored to prevent credential leaks
 
 Output is written to `dist/app/browser/`.
 
-**Note:** Environment variables must be set before running the build. The script will warn if any required variables are missing.
+**Important Notes:**
+- Environment variables must be set before running the build
+- In CI environments (or with `--strict` flag), the build fails if any required variables are missing
+- Locally, missing variables trigger warnings but don't fail the build
+- The generated file (`environment.prod.generated.ts`) is automatically ignored by git
 
 ## Environment Variables
 
