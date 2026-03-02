@@ -1,0 +1,65 @@
+<form
+  (ngSubmit)="onSubmit()"
+  class="space-y-4 rounded-xl bg-white p-6 shadow dark:bg-gray-800"
+>
+  <h2 class="text-lg font-semibold dark:text-white">Schedule a Broadcast</h2>
+
+  <div>
+    <label
+      for="title"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >Title</label
+    >
+    <input
+      id="title"
+      type="text"
+      [(ngModel)]="title"
+      name="title"
+      required
+      [disabled]="disabled()"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white disabled:opacity-50"
+    />
+  </div>
+
+  <div>
+    <label
+      for="date"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >Date</label
+    >
+    <input
+      id="date"
+      type="date"
+      [(ngModel)]="date"
+      name="date"
+      required
+      [disabled]="disabled()"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white disabled:opacity-50"
+    />
+  </div>
+
+  <div>
+    <label
+      for="time"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >Time</label
+    >
+    <input
+      id="time"
+      type="time"
+      [(ngModel)]="time"
+      name="time"
+      required
+      [disabled]="disabled()"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white disabled:opacity-50"
+    />
+  </div>
+
+  <button
+    type="submit"
+    [disabled]="disabled()"
+    class="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    {{ disabled() ? 'Scheduling...' : 'Schedule Broadcast' }}
+  </button>
+</form>
