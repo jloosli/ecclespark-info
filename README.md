@@ -15,11 +15,24 @@ Open `http://localhost:4200`.
 
 ## Production Build
 
+The production build injects environment variables at build time using a custom script:
+
 ```bash
-ng build --configuration production
+npm run build:prod
 ```
 
+This command:
+1. Runs `scripts/inject-env.js` to generate `environment.prod.generated.ts` with actual environment values
+2. The generated file is used via Angular's `fileReplacements` during production build
+3. The generated file is gitignored to prevent credential leaks
+
 Output is written to `dist/app/browser/`.
+
+**Important Notes:**
+- Environment variables must be set before running the build
+- In CI environments (or with `--strict` flag), the build fails if any required variables are missing
+- Locally, missing variables trigger warnings but don't fail the build
+- The generated file (`environment.prod.generated.ts`) is automatically ignored by git
 
 ## Environment Variables
 

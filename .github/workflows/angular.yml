@@ -29,7 +29,7 @@ jobs:
           NG_YOUTUBE_CLIENT_ID: ${{ secrets.NG_YOUTUBE_CLIENT_ID }}
           NG_YOUTUBE_API_KEY: ${{ secrets.NG_YOUTUBE_API_KEY }}
           NG_YOUTUBE_STREAM_ID: ${{ secrets.NG_YOUTUBE_STREAM_ID }}
-        run: npx ng build --configuration production
+        run: npm run build:prod
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
