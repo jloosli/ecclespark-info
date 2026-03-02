@@ -1,9 +1,0 @@
-{{- $inServerMode := hugo.IsServer -}}
-{{- if $inServerMode -}}
-{{- $tw := resources.Get "css/app.css" | css.PostCSS -}}
-<link rel="stylesheet" href="{{ $tw.Permalink | absURL }}" media="screen">
-{{- else -}}
-{{- $tw := resources.Get "css/app.css" | css.PostCSS | fingerprint -}}
-<link rel="stylesheet" href="{{ $tw.Permalink | absURL }}"
-      integrity="{{ $tw.Data.Integrity }}" media="screen">
-{{- end -}}
