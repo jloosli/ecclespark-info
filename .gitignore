@@ -8,3 +8,6 @@ node_modules
 .env
 .DS_Store
 .claude/worktrees/
+
+# Generated environment files (contain secrets)
+src/environments/environment.prod.generated.ts
