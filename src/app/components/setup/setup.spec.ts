@@ -13,6 +13,7 @@ describe('Setup', () => {
   };
 
   const mockYoutubeService = {
+    verifyChannelAccess: () => of(true),
     createBroadcast: () => ({
       subscribe: ({ next }: { next: (r: unknown) => void }) =>
         next({
@@ -44,8 +45,23 @@ describe('Setup', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should start in idle state', () => {
+  it('should start in unauthenticated state', () => {
     const fixture = TestBed.createComponent(Setup);
+    expect(fixture.componentInstance.pageState()).toBe('unauthenticated');
+  });
+
+  it('should transition to idle after successful sign-in and verification', async () => {
+    const fixture = TestBed.createComponent(Setup);
+    await fixture.componentInstance.signIn();
     expect(fixture.componentInstance.pageState()).toBe('idle');
+  });
+
+  it('should transition to unauthorized when channel access is denied', async () => {
+    TestBed.overrideProvider(YoutubeService, {
+      useValue: { ...mockYoutubeService, verifyChannelAccess: () => of(false) },
+    });
+    const fixture = TestBed.createComponent(Setup);
+    await fixture.componentInstance.signIn();
+    expect(fixture.componentInstance.pageState()).toBe('unauthorized');
   });
 });

@@ -23,5 +23,6 @@ export const environment = {
     clientId: '',
     apiKey: '',
     streamId: '',
+    channelId: '',
   },
 };
