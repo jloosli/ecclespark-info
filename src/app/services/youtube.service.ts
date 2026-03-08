@@ -1,6 +1,6 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { from, Observable, switchMap } from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface CreateBroadcastParams {
@@ -68,6 +68,42 @@ export class YoutubeService {
       };
       document.head.appendChild(gapiScript);
     });
+  }
+
+  verifyChannelAccess(accessToken: string, channelId: string): Observable<boolean> {
+    if (!isPlatformBrowser(this.platformId)) {
+      throw new Error('verifyChannelAccess can only be called in browser context');
+    }
+    return from(this.loadScripts()).pipe(
+      switchMap(() => {
+        gapi.client.setToken({ access_token: accessToken });
+        return from(
+          gapi.client.request({
+            path: 'https://www.googleapis.com/youtube/v3/channels',
+            method: 'GET',
+            params: { mine: 'true', part: 'id' },
+          }),
+        );
+      }),
+      map((response) => {
+        if (response.status >= 400) {
+          // Try to extract a meaningful error message from the response body
+          try {
+            const errorBody = JSON.parse(response.body) as { error?: { message?: string } };
+            const message =
+              errorBody?.error?.message ??
+              `YouTube API error while verifying channel access (status ${response.status})`;
+            throw new Error(message);
+          } catch {
+            throw new Error(
+              `YouTube API error while verifying channel access (status ${response.status})`,
+            );
+          }
+        }
+        const data = JSON.parse(response.body) as { items?: { id: string }[] };
+        return (data.items ?? []).some((item) => item.id === channelId);
+      }),
+    );
   }
 
   createBroadcast(params: CreateBroadcastParams, accessToken: string): Observable<BroadcastResult> {

@@ -41,4 +41,17 @@ describe('YoutubeService', () => {
       );
     }).toThrow('createBroadcast can only be called in browser context');
   });
+
+  it('should throw error when verifyChannelAccess is called on server', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'server' },
+      ],
+    });
+    const service = TestBed.inject(YoutubeService);
+
+    expect(() => {
+      service.verifyChannelAccess('fake-token', 'UC12345');
+    }).toThrow('verifyChannelAccess can only be called in browser context');
+  });
 });

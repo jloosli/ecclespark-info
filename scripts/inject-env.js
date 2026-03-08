@@ -38,6 +38,7 @@ const envVars = [
   'NG_YOUTUBE_CLIENT_ID',
   'NG_YOUTUBE_API_KEY',
   'NG_YOUTUBE_STREAM_ID',
+  'NG_YOUTUBE_CHANNEL_ID',
 ];
 
 try {
@@ -98,6 +99,7 @@ export const environment = {
     clientId: ${JSON.stringify(envValues.NG_YOUTUBE_CLIENT_ID)},
     apiKey: ${JSON.stringify(envValues.NG_YOUTUBE_API_KEY)},
     streamId: ${JSON.stringify(envValues.NG_YOUTUBE_STREAM_ID)},
+    channelId: ${JSON.stringify(envValues.NG_YOUTUBE_CHANNEL_ID)},
   },
 };
 `;
