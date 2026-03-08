@@ -86,6 +86,20 @@ export class YoutubeService {
         );
       }),
       map((response) => {
+        if (response.status >= 400) {
+          // Try to extract a meaningful error message from the response body
+          try {
+            const errorBody = JSON.parse(response.body) as { error?: { message?: string } };
+            const message =
+              errorBody?.error?.message ??
+              `YouTube API error while verifying channel access (status ${response.status})`;
+            throw new Error(message);
+          } catch {
+            throw new Error(
+              `YouTube API error while verifying channel access (status ${response.status})`,
+            );
+          }
+        }
         const data = JSON.parse(response.body) as { items?: { id: string }[] };
         return (data.items ?? []).some((item) => item.id === channelId);
       }),
