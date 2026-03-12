@@ -18,26 +18,6 @@
         <p class="text-gray-600 dark:text-gray-300">Signing in...</p>
       </div>
     }
-    @case ('verifying') {
-      <div class="text-center py-12">
-        <p class="text-gray-600 dark:text-gray-300">Verifying channel access...</p>
-      </div>
-    }
-    @case ('unauthorized') {
-      <div
-        role="alert"
-        class="rounded-lg bg-amber-50 p-6 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
-      >
-        <p class="font-medium text-lg mb-2">Access Denied</p>
-        <p class="text-sm mb-4">Your Google account does not manage this YouTube channel. Only authorized channel managers can create broadcasts.</p>
-        <button
-          (click)="onRetry()"
-          class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Try a different account
-        </button>
-      </div>
-    }
     @case ('error') {
       <div
         role="alert"

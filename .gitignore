@@ -5,6 +5,7 @@ node_modules
 .idea
 .firebaserc
 *.lock
+!functions/package-lock.json
 .env
 .DS_Store
 .claude/worktrees/

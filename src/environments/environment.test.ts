@@ -12,10 +12,4 @@ export const environment = {
     messagingSenderId: '634730540408',
     appId: '1:634730540408:web:51e6c9a55592fcf7a92c8d',
   },
-  youtube: {
-    clientId: '',
-    apiKey: '',
-    streamId: '',
-    channelId: '',
-  },
 };

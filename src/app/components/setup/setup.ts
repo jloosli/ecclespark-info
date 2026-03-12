@@ -3,11 +3,18 @@ import { BroadcastForm } from './broadcast-form/broadcast-form';
 import { BroadcastList } from './broadcast-list/broadcast-list';
 import { SuccessBanner } from './success-banner/success-banner';
 import { AuthService } from '../../services/auth.service';
-import { YoutubeService, CreateBroadcastParams, BroadcastResult } from '../../services/youtube.service';
-import { StreamsService } from '../../services/streams.service';
-import { environment } from '../../../environments/environment';
+import {
+  FunctionsService,
+  CreateBroadcastResponse,
+} from '../../services/functions.service';
 
-type PageState = 'unauthenticated' | 'signing-in' | 'verifying' | 'unauthorized' | 'idle' | 'submitting' | 'success' | 'error';
+type PageState =
+  | 'unauthenticated'
+  | 'signing-in'
+  | 'idle'
+  | 'submitting'
+  | 'success'
+  | 'error';
 
 @Component({
   selector: 'app-setup',
@@ -17,60 +24,50 @@ type PageState = 'unauthenticated' | 'signing-in' | 'verifying' | 'unauthorized'
 })
 export class Setup {
   private authService = inject(AuthService);
-  private youtubeService = inject(YoutubeService);
-  private streamsService = inject(StreamsService);
+  private functionsService = inject(FunctionsService);
 
   pageState = signal<PageState>('unauthenticated');
   errorMessage = signal<string | null>(null);
-  successResult = signal<BroadcastResult | null>(null);
-  private accessToken: string | null = null;
+  successResult = signal<CreateBroadcastResponse | null>(null);
 
   async signIn(): Promise<void> {
     this.pageState.set('signing-in');
     this.errorMessage.set(null);
     try {
-      const { accessToken } = await this.authService.signInWithGoogle();
-      this.accessToken = accessToken;
-      this.pageState.set('verifying');
-
-      const channelId = environment.youtube.channelId;
-      const hasAccess = await new Promise<boolean>((resolve, reject) => {
-        this.youtubeService.verifyChannelAccess(accessToken, channelId).subscribe({
-          next: resolve,
-          error: reject,
-        });
-      });
-
-      this.pageState.set(hasAccess ? 'idle' : 'unauthorized');
+      await this.authService.signInWithGoogle();
+      this.pageState.set('idle');
     } catch (err) {
-      this.errorMessage.set(err instanceof Error ? err.message : 'An unexpected error occurred');
+      this.errorMessage.set(
+        err instanceof Error ? err.message : 'Sign-in failed',
+      );
       this.pageState.set('error');
     }
   }
 
-  async onFormSubmit(params: CreateBroadcastParams): Promise<void> {
-    if (!this.accessToken) {
-      this.pageState.set('unauthenticated');
-      return;
-    }
+  async onFormSubmit(params: {
+    title: string;
+    scheduledStartTime: Date;
+  }): Promise<void> {
     this.pageState.set('submitting');
     this.errorMessage.set(null);
     try {
-      const result = await new Promise<BroadcastResult>((resolve, reject) => {
-        this.youtubeService.createBroadcast(params, this.accessToken!).subscribe({
-          next: resolve,
-          error: reject,
-        });
-      });
-      await this.streamsService.createStream({
+      const result = await this.functionsService.createBroadcast({
         title: params.title,
-        youtubeId: result.youtubeId,
-        scheduledAt: result.scheduledStartTime,
+        scheduledStartTime: params.scheduledStartTime.toISOString(),
       });
       this.successResult.set(result);
       this.pageState.set('success');
-    } catch (err) {
-      this.errorMessage.set(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } catch (err: unknown) {
+      const firebaseErr = err as { code?: string; message?: string };
+      if (firebaseErr.code === 'functions/permission-denied') {
+        this.errorMessage.set(
+          'Your account is not authorized to create broadcasts.',
+        );
+      } else {
+        this.errorMessage.set(
+          firebaseErr.message ?? 'An unexpected error occurred',
+        );
+      }
       this.pageState.set('error');
     }
   }
@@ -81,7 +78,6 @@ export class Setup {
   }
 
   onRetry(): void {
-    this.accessToken = null;
     this.errorMessage.set(null);
     this.pageState.set('unauthenticated');
   }

@@ -15,7 +15,6 @@
  * 
  * Usage:
  *   export NG_FIREBASE_API_KEY=xxx
- *   export NG_YOUTUBE_API_KEY=yyy
  *   node scripts/inject-env.js
  *   ng build --configuration production
  * 
@@ -35,10 +34,6 @@ const envVars = [
   'NG_FIREBASE_AUTH_DOMAIN',
   'NG_FIREBASE_MESSAGING_SENDER_ID',
   'NG_FIREBASE_APP_ID',
-  'NG_YOUTUBE_CLIENT_ID',
-  'NG_YOUTUBE_API_KEY',
-  'NG_YOUTUBE_STREAM_ID',
-  'NG_YOUTUBE_CHANNEL_ID',
 ];
 
 try {
@@ -94,12 +89,6 @@ export const environment = {
     storageBucket: 'ecclespark-info.firebasestorage.app',
     messagingSenderId: ${JSON.stringify(envValues.NG_FIREBASE_MESSAGING_SENDER_ID)},
     appId: ${JSON.stringify(envValues.NG_FIREBASE_APP_ID)},
-  },
-  youtube: {
-    clientId: ${JSON.stringify(envValues.NG_YOUTUBE_CLIENT_ID)},
-    apiKey: ${JSON.stringify(envValues.NG_YOUTUBE_API_KEY)},
-    streamId: ${JSON.stringify(envValues.NG_YOUTUBE_STREAM_ID)},
-    channelId: ${JSON.stringify(envValues.NG_YOUTUBE_CHANNEL_ID)},
   },
 };
 `;

@@ -2,7 +2,6 @@ import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import {
   GoogleAuthProvider,
-  OAuthCredential,
   onAuthStateChanged,
   signInWithPopup,
   User,
@@ -25,15 +24,9 @@ export class AuthService {
     }
   }
 
-  async signInWithGoogle(): Promise<{ credential: OAuthCredential; accessToken: string }> {
+  async signInWithGoogle(): Promise<void> {
     if (!auth) throw new Error('Auth not initialized');
     const provider = new GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/youtube.force-ssl');
-    const result = await signInWithPopup(auth, provider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    if (!credential || !credential.accessToken) {
-      throw new Error('Failed to get Google credential');
-    }
-    return { credential, accessToken: credential.accessToken };
+    await signInWithPopup(auth, provider);
   }
 }
