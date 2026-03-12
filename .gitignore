@@ -6,6 +6,7 @@ node_modules
 .firebaserc
 *.lock
 !functions/package-lock.json
+.secret.local
 .env
 .DS_Store
 .claude/worktrees/
@@ -13,5 +14,3 @@ node_modules
 # Generated environment files (contain secrets)
 src/environments/environment.prod.generated.ts
 
-# Hugo build output (may contain injected secrets)
-public/apps/
