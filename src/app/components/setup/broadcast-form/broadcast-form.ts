@@ -1,6 +1,10 @@
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CreateBroadcastParams } from '../../../services/youtube.service';
+
+export interface BroadcastFormParams {
+  title: string;
+  scheduledStartTime: Date;
+}
 
 @Component({
   selector: 'app-broadcast-form',
@@ -10,7 +14,7 @@ import { CreateBroadcastParams } from '../../../services/youtube.service';
 })
 export class BroadcastForm {
   disabled = input<boolean>(false);
-  formSubmit = output<CreateBroadcastParams>();
+  formSubmit = output<BroadcastFormParams>();
 
   title = 'Eccles Park Ward Sacrament Meeting';
   date = '';

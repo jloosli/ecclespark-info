@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "ecclespark",
-      "runtimeExecutable": "docker",
-      "runtimeArgs": ["compose", "up", "server"],
-      "port": 1313
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "port": 4200
     }
   ]
 }

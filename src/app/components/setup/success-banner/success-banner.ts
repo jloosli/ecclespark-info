@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { BroadcastResult } from '../../../services/youtube.service';
+import { CreateBroadcastResponse } from '../../../services/functions.service';
 
 @Component({
   selector: 'app-success-banner',
@@ -30,6 +30,6 @@ import { BroadcastResult } from '../../../services/youtube.service';
   `,
 })
 export class SuccessBanner {
-  result = input.required<BroadcastResult>();
+  result = input.required<CreateBroadcastResponse>();
   dismissed = output<void>();
 }

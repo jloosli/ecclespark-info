@@ -1,4 +1,4 @@
-name: Angular Build & Deploy
+name: Build & Deploy
 
 on:
   push:
@@ -15,10 +15,15 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
 
       - name: Install Angular dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Install Functions dependencies
+        run: cd functions && npm ci
 
       - name: Build Angular app
         env:
@@ -26,11 +31,10 @@ jobs:
           NG_FIREBASE_AUTH_DOMAIN: ${{ secrets.NG_FIREBASE_AUTH_DOMAIN }}
           NG_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NG_FIREBASE_MESSAGING_SENDER_ID }}
           NG_FIREBASE_APP_ID: ${{ secrets.NG_FIREBASE_APP_ID }}
-          NG_YOUTUBE_CLIENT_ID: ${{ secrets.NG_YOUTUBE_CLIENT_ID }}
-          NG_YOUTUBE_API_KEY: ${{ secrets.NG_YOUTUBE_API_KEY }}
-          NG_YOUTUBE_STREAM_ID: ${{ secrets.NG_YOUTUBE_STREAM_ID }}
-          NG_YOUTUBE_CHANNEL_ID: ${{ secrets.NG_YOUTUBE_CHANNEL_ID }}
         run: npm run build:prod
+
+      - name: Build Functions
+        run: cd functions && npm run build
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -39,3 +43,9 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
           channelId: live
           projectId: ecclespark-info
+
+      - name: Deploy Cloud Functions
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}' > /tmp/firebase-sa.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json
+          npx firebase-tools deploy --only functions --project ecclespark-info
