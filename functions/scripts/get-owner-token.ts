@@ -45,7 +45,7 @@ async function main() {
   console.log('\nOpen this URL in your browser to sign in:\n');
   console.log(authorizeUrl);
   console.log(
-    '\nSign in with the channel OWNER account (e.g., jloosli@gmail.com) and grant YouTube access.\n',
+    '\nSign in with the channel OWNER account (e.g., owner@example.com) and grant YouTube access.\n',
   );
 
   const server = http.createServer(async (req, res) => {
