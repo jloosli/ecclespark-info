@@ -3,9 +3,11 @@ name: Angular Preview Deploy
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
   build-and-preview:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     steps:
@@ -47,6 +49,17 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
           projectId: ecclespark-info
 
+      - name: Add preview domain to Firebase Auth
+        if: steps.firebase-deploy.outputs.details_url
+        continue-on-error: true
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
+        run: |
+          PREVIEW_URL="${{ steps.firebase-deploy.outputs.details_url }}"
+          PREVIEW_DOMAIN=$(echo "$PREVIEW_URL" | sed 's|https\?://||' | sed 's|/.*||')
+          echo "Adding authorized domain: $PREVIEW_DOMAIN"
+          node scripts/manage-firebase-auth-domain.js add "$PREVIEW_DOMAIN"
+
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
@@ -54,3 +67,23 @@ jobs:
         run: npx playwright test
         env:
           BASE_URL: ${{ steps.firebase-deploy.outputs.details_url }}
+
+  cleanup-auth-domain:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Remove preview domain from Firebase Auth
+        continue-on-error: true
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          echo "Removing authorized domains matching: ecclespark-info--pr${PR_NUMBER}-"
+          node scripts/manage-firebase-auth-domain.js remove-pattern "ecclespark-info--pr${PR_NUMBER}-"
