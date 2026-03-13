@@ -13,9 +13,9 @@ const {
 } = vi.hoisted(() => {
   const mockGet = vi.fn();
   const mockDoc = vi.fn(() => ({ get: mockGet }));
-  const mockCollection = vi.fn(() => ({ doc: mockDoc }));
+  const mockCollection = vi.fn((_name?: string) => ({ doc: mockDoc }));
   const mockAdd = vi.fn();
-  const mockStreamsCollection = vi.fn(() => ({ add: mockAdd }));
+  const mockStreamsCollection = vi.fn((_name?: string) => ({ add: mockAdd }));
   const mockCreateYouTubeBroadcast = vi.fn();
 
   class MockHttpsError extends Error {
