@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // --- Hoisted mocks (available inside vi.mock factories) ---
-const { mockInsert, mockBind, mockSetCredentials } = vi.hoisted(() => ({
+const { mockInsert, mockBind, mockList, mockDelete, mockSetCredentials } = vi.hoisted(() => ({
   mockInsert: vi.fn(),
   mockBind: vi.fn(),
+  mockList: vi.fn(),
+  mockDelete: vi.fn(),
   mockSetCredentials: vi.fn(),
 }));
 
@@ -17,6 +19,8 @@ vi.mock('googleapis', () => {
         liveBroadcasts: {
           insert: mockInsert,
           bind: mockBind,
+          list: mockList,
+          delete: mockDelete,
         },
       })),
       auth: {
@@ -27,7 +31,7 @@ vi.mock('googleapis', () => {
 });
 
 // --- Import module under test ---
-import { createYouTubeBroadcast } from './youtube';
+import { createYouTubeBroadcast, getYouTubeBroadcastStatus, deleteYouTubeBroadcast } from './youtube';
 
 // --- Helpers ---
 
@@ -136,5 +140,72 @@ describe('createYouTubeBroadcast', () => {
     await createYouTubeBroadcast(credentials, baseParams);
 
     expect(mockBind).not.toHaveBeenCalled();
+  });
+});
+
+describe('getYouTubeBroadcastStatus', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns lifeCycleStatus when broadcast exists', async () => {
+    mockList.mockResolvedValueOnce({
+      data: {
+        items: [{ status: { lifeCycleStatus: 'live' } }],
+      },
+    });
+
+    const result = await getYouTubeBroadcastStatus(credentials, 'yt-123');
+    expect(result).toBe('live');
+    expect(mockList).toHaveBeenCalledWith(
+      expect.objectContaining({
+        part: ['status'],
+        id: ['yt-123'],
+      }),
+    );
+  });
+
+  it('returns null when no items are returned', async () => {
+    mockList.mockResolvedValueOnce({
+      data: { items: [] },
+    });
+
+    const result = await getYouTubeBroadcastStatus(credentials, 'yt-missing');
+    expect(result).toBeNull();
+  });
+
+  it('returns null when items is undefined', async () => {
+    mockList.mockResolvedValueOnce({
+      data: {},
+    });
+
+    const result = await getYouTubeBroadcastStatus(credentials, 'yt-missing');
+    expect(result).toBeNull();
+  });
+});
+
+describe('deleteYouTubeBroadcast', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('calls liveBroadcasts.delete with correct params', async () => {
+    mockDelete.mockResolvedValueOnce({});
+
+    await deleteYouTubeBroadcast(credentials, 'yt-123');
+
+    expect(mockDelete).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'yt-123',
+      }),
+    );
+  });
+
+  it('propagates errors from the API', async () => {
+    mockDelete.mockRejectedValueOnce(new Error('Not found'));
+
+    await expect(
+      deleteYouTubeBroadcast(credentials, 'yt-missing'),
+    ).rejects.toThrow('Not found');
   });
 });

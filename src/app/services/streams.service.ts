@@ -27,7 +27,7 @@ export class StreamsService {
 
     const activeQuery = query(
       collection(db, 'streams'),
-      where('status', 'in', ['SCHEDULED', 'LIVE']),
+      where('status', 'in', ['SCHEDULED', 'BROADCAST']),
       orderBy('scheduled_at', 'desc'),
     );
 

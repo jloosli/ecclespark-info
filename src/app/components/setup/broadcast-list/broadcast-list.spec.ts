@@ -47,7 +47,7 @@ describe('BroadcastList', () => {
   it('should render stream items', async () => {
     const streams = [
       makeStream({ id: '1', title: 'Morning Service', status: 'SCHEDULED' }),
-      makeStream({ id: '2', title: 'Evening Service', status: 'LIVE' }),
+      makeStream({ id: '2', title: 'Evening Service', status: 'BROADCAST' }),
     ];
     setup(of(streams));
     await fixture.whenStable();
@@ -58,6 +58,6 @@ describe('BroadcastList', () => {
     expect(items[0].textContent).toContain('Morning Service');
     expect(items[0].textContent).toContain('SCHEDULED');
     expect(items[1].textContent).toContain('Evening Service');
-    expect(items[1].textContent).toContain('LIVE');
+    expect(items[1].textContent).toContain('BROADCAST');
   });
 });

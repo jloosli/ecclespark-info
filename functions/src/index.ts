@@ -1,8 +1,9 @@
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
-import { createYouTubeBroadcast } from './youtube';
+import { createYouTubeBroadcast, getYouTubeBroadcastStatus, deleteYouTubeBroadcast } from './youtube';
 import type { CreateBroadcastRequest, CreateBroadcastResponse } from './types';
 
 initializeApp();
@@ -119,5 +120,83 @@ export const createBroadcast = onCall(
       watchUrl: `https://www.youtube.com/watch?v=${result.youtubeId}`,
       firestoreId: streamDoc.id,
     };
+  },
+);
+
+export const manageStreamStatuses = onSchedule(
+  {
+    schedule: '0 11 * * *',
+    timeZone: 'America/Denver',
+    secrets: [youtubeOwnerRefreshToken, youtubeClientId, youtubeClientSecret],
+    region: 'us-central1',
+    maxInstances: 1,
+  },
+  async () => {
+    const now = Timestamp.now();
+    const twentyFourHoursAgo = Timestamp.fromMillis(now.toMillis() - 24 * 60 * 60 * 1000);
+    const sixDaysAgo = Timestamp.fromMillis(now.toMillis() - 6 * 24 * 60 * 60 * 1000);
+
+    const credentials = {
+      clientId: youtubeClientId.value(),
+      clientSecret: youtubeClientSecret.value(),
+      refreshToken: youtubeOwnerRefreshToken.value(),
+    };
+
+    // Pass 1: Promote SCHEDULED → BROADCAST where YouTube says live/complete/testing
+    const scheduledSnap = await db
+      .collection('streams')
+      .where('status', '==', 'SCHEDULED')
+      .where('scheduled_at', '<=', now)
+      .get();
+
+    for (const doc of scheduledSnap.docs) {
+      const youtubeId = doc.data().youtube_id;
+      if (!youtubeId) continue;
+
+      try {
+        const ytStatus = await getYouTubeBroadcastStatus(credentials, youtubeId);
+        if (ytStatus === 'live' || ytStatus === 'complete' || ytStatus === 'testing') {
+          await doc.ref.update({ status: 'BROADCAST' });
+          console.log(`Promoted ${doc.id} to BROADCAST (YouTube: ${ytStatus})`);
+        }
+      } catch (err) {
+        console.error(`Failed to check YouTube status for ${doc.id}:`, err);
+      }
+    }
+
+    // Pass 2: Delete stale SCHEDULED (>24h past scheduled_at, not broadcast)
+    const staleSnap = await db
+      .collection('streams')
+      .where('status', '==', 'SCHEDULED')
+      .where('scheduled_at', '<=', twentyFourHoursAgo)
+      .get();
+
+    for (const doc of staleSnap.docs) {
+      const youtubeId = doc.data().youtube_id;
+      if (youtubeId) {
+        try {
+          await deleteYouTubeBroadcast(credentials, youtubeId);
+        } catch (err: unknown) {
+          const status = (err as { code?: number }).code;
+          if (status !== 404) {
+            console.error(`Failed to delete YouTube broadcast ${youtubeId}:`, err);
+          }
+        }
+      }
+      await doc.ref.delete();
+      console.log(`Deleted stale SCHEDULED stream ${doc.id}`);
+    }
+
+    // Pass 3: Archive old BROADCAST (≥6 days past scheduled_at)
+    const oldBroadcastSnap = await db
+      .collection('streams')
+      .where('status', '==', 'BROADCAST')
+      .where('scheduled_at', '<=', sixDaysAgo)
+      .get();
+
+    for (const doc of oldBroadcastSnap.docs) {
+      await doc.ref.update({ status: 'ARCHIVED' });
+      console.log(`Archived stream ${doc.id}`);
+    }
   },
 );

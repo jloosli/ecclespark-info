@@ -71,3 +71,41 @@ export async function createYouTubeBroadcast(
       broadcast.snippet?.publishedAt ?? new Date().toISOString(),
   };
 }
+
+export async function getYouTubeBroadcastStatus(
+  credentials: YouTubeCredentials,
+  youtubeId: string,
+): Promise<string | null> {
+  const oauth2Client = new google.auth.OAuth2(
+    credentials.clientId,
+    credentials.clientSecret,
+  );
+  oauth2Client.setCredentials({ refresh_token: credentials.refreshToken });
+
+  const response = await youtube.liveBroadcasts.list({
+    auth: oauth2Client,
+    part: ['status'],
+    id: [youtubeId],
+  });
+
+  const items = response.data.items;
+  if (!items || items.length === 0) return null;
+
+  return items[0].status?.lifeCycleStatus ?? null;
+}
+
+export async function deleteYouTubeBroadcast(
+  credentials: YouTubeCredentials,
+  youtubeId: string,
+): Promise<void> {
+  const oauth2Client = new google.auth.OAuth2(
+    credentials.clientId,
+    credentials.clientSecret,
+  );
+  oauth2Client.setCredentials({ refresh_token: credentials.refreshToken });
+
+  await youtube.liveBroadcasts.delete({
+    auth: oauth2Client,
+    id: youtubeId,
+  });
+}
