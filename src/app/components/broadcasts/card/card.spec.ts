@@ -78,24 +78,19 @@ describe('Card', () => {
   });
 
   describe('statusClasses()', () => {
-    it('should return LIVE classes', () => {
-      fixture.componentRef.setInput('stream', { ...mockStream, status: 'LIVE' });
-      expect(component.statusClasses()).toBe('bg-red-500 text-white animate-pulse');
-    });
-
     it('should return SCHEDULED classes', () => {
       fixture.componentRef.setInput('stream', { ...mockStream, status: 'SCHEDULED' });
       expect(component.statusClasses()).toBe('bg-blue-100 text-blue-800');
     });
 
-    it('should return ENDED classes', () => {
-      fixture.componentRef.setInput('stream', { ...mockStream, status: 'ENDED' });
-      expect(component.statusClasses()).toBe('bg-gray-100 text-gray-600');
+    it('should return BROADCAST classes', () => {
+      fixture.componentRef.setInput('stream', { ...mockStream, status: 'BROADCAST' });
+      expect(component.statusClasses()).toBe('bg-green-100 text-green-800');
     });
 
-    it('should return CANCELLED classes', () => {
-      fixture.componentRef.setInput('stream', { ...mockStream, status: 'CANCELLED' });
-      expect(component.statusClasses()).toBe('bg-gray-100 text-gray-500 line-through');
+    it('should return ARCHIVED classes', () => {
+      fixture.componentRef.setInput('stream', { ...mockStream, status: 'ARCHIVED' });
+      expect(component.statusClasses()).toBe('bg-gray-100 text-gray-600');
     });
   });
 });

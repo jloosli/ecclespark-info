@@ -16,7 +16,7 @@ const mockStreams: Stream[] = [
     id: '2',
     title: 'Stream 2',
     scheduled_at: Timestamp.fromDate(new Date()),
-    status: 'LIVE',
+    status: 'BROADCAST',
     stream_id: 'sid-2',
   },
   {

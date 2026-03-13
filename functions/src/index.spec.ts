@@ -6,17 +6,29 @@ const {
   mockDoc,
   mockCollection,
   mockAdd,
+  mockWhere,
+  mockWhereGet,
   mockStreamsCollection,
   mockCreateYouTubeBroadcast,
+  mockGetYouTubeBroadcastStatus,
+  mockDeleteYouTubeBroadcast,
   MockHttpsError,
   capturedHandlerRef,
+  capturedScheduleHandlerRef,
 } = vi.hoisted(() => {
   const mockGet = vi.fn();
   const mockDoc = vi.fn(() => ({ get: mockGet }));
   const mockCollection = vi.fn((_name?: string) => ({ doc: mockDoc }));
   const mockAdd = vi.fn();
-  const mockStreamsCollection = vi.fn((_name?: string) => ({ add: mockAdd }));
+  const mockWhereGet = vi.fn();
+  const mockWhere = vi.fn(() => ({ where: mockWhere, get: mockWhereGet }));
+  const mockStreamsCollection = vi.fn((_name?: string) => ({
+    add: mockAdd,
+    where: mockWhere,
+  }));
   const mockCreateYouTubeBroadcast = vi.fn();
+  const mockGetYouTubeBroadcastStatus = vi.fn();
+  const mockDeleteYouTubeBroadcast = vi.fn();
 
   class MockHttpsError extends Error {
     code: string;
@@ -30,16 +42,24 @@ const {
   const capturedHandlerRef: { current: ((request: unknown) => Promise<unknown>) | null } = {
     current: null,
   };
+  const capturedScheduleHandlerRef: { current: (() => Promise<void>) | null } = {
+    current: null,
+  };
 
   return {
     mockGet,
     mockDoc,
     mockCollection,
     mockAdd,
+    mockWhere,
+    mockWhereGet,
     mockStreamsCollection,
     mockCreateYouTubeBroadcast,
+    mockGetYouTubeBroadcastStatus,
+    mockDeleteYouTubeBroadcast,
     MockHttpsError,
     capturedHandlerRef,
+    capturedScheduleHandlerRef,
   };
 });
 
@@ -63,7 +83,15 @@ vi.mock('firebase-admin/firestore', () => ({
   Timestamp: {
     fromDate: vi.fn((d: Date) => ({
       toDate: () => d,
+      toMillis: () => d.getTime(),
       _seconds: Math.floor(d.getTime() / 1000),
+    })),
+    now: vi.fn(() => ({
+      toMillis: () => Date.now(),
+    })),
+    fromMillis: vi.fn((ms: number) => ({
+      toMillis: () => ms,
+      _seconds: Math.floor(ms / 1000),
     })),
   },
 }));
@@ -76,6 +104,13 @@ vi.mock('firebase-functions/v2/https', () => ({
   HttpsError: MockHttpsError,
 }));
 
+vi.mock('firebase-functions/v2/scheduler', () => ({
+  onSchedule: vi.fn((_opts: unknown, handler: () => Promise<void>) => {
+    capturedScheduleHandlerRef.current = handler;
+    return 'mocked-scheduled-function';
+  }),
+}));
+
 vi.mock('firebase-functions/params', () => ({
   defineSecret: vi.fn((name: string) => ({
     value: () => `mock-${name}`,
@@ -84,6 +119,8 @@ vi.mock('firebase-functions/params', () => ({
 
 vi.mock('./youtube', () => ({
   createYouTubeBroadcast: mockCreateYouTubeBroadcast,
+  getYouTubeBroadcastStatus: mockGetYouTubeBroadcastStatus,
+  deleteYouTubeBroadcast: mockDeleteYouTubeBroadcast,
 }));
 
 // --- Import module under test (triggers onCall capture) ---
@@ -96,6 +133,13 @@ function handler() {
     throw new Error('Handler was not captured — onCall mock not invoked');
   }
   return capturedHandlerRef.current;
+}
+
+function scheduleHandler() {
+  if (!capturedScheduleHandlerRef.current) {
+    throw new Error('Schedule handler was not captured — onSchedule mock not invoked');
+  }
+  return capturedScheduleHandlerRef.current;
 }
 
 function makeRequest(overrides: Record<string, unknown> = {}) {
@@ -231,5 +275,127 @@ describe('createBroadcast onCall handler', () => {
         streamId: 'mock-YOUTUBE_STREAM_ID',
       },
     );
+  });
+});
+
+describe('manageStreamStatuses', () => {
+  function makeDoc(id: string, data: Record<string, unknown>) {
+    const mockUpdate = vi.fn();
+    const mockDeleteDoc = vi.fn();
+    return {
+      id,
+      data: () => data,
+      ref: { update: mockUpdate, delete: mockDeleteDoc },
+      _mockUpdate: mockUpdate,
+      _mockDelete: mockDeleteDoc,
+    };
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('promotes SCHEDULED to BROADCAST when YouTube says live', async () => {
+    const doc = makeDoc('stream-1', { youtube_id: 'yt-1' });
+    // The handler calls .where().where().get() three times (3 passes)
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [doc] })   // Pass 1: scheduled <= now
+      .mockResolvedValueOnce({ docs: [] })        // Pass 2: stale scheduled
+      .mockResolvedValueOnce({ docs: [] });       // Pass 3: old broadcast
+
+    mockGetYouTubeBroadcastStatus.mockResolvedValueOnce('live');
+
+    await scheduleHandler()();
+
+    expect(mockGetYouTubeBroadcastStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ clientId: 'mock-YOUTUBE_CLIENT_ID' }),
+      'yt-1',
+    );
+    expect(doc._mockUpdate).toHaveBeenCalledWith({ status: 'BROADCAST' });
+  });
+
+  it('promotes SCHEDULED to BROADCAST when YouTube says complete', async () => {
+    const doc = makeDoc('stream-2', { youtube_id: 'yt-2' });
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [doc] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] });
+
+    mockGetYouTubeBroadcastStatus.mockResolvedValueOnce('complete');
+
+    await scheduleHandler()();
+
+    expect(doc._mockUpdate).toHaveBeenCalledWith({ status: 'BROADCAST' });
+  });
+
+  it('does not promote SCHEDULED when YouTube says created', async () => {
+    const doc = makeDoc('stream-3', { youtube_id: 'yt-3' });
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [doc] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] });
+
+    mockGetYouTubeBroadcastStatus.mockResolvedValueOnce('created');
+
+    await scheduleHandler()();
+
+    expect(doc._mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it('deletes stale SCHEDULED streams and their YouTube broadcasts', async () => {
+    const doc = makeDoc('stream-4', { youtube_id: 'yt-4' });
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [] })        // Pass 1
+      .mockResolvedValueOnce({ docs: [doc] })     // Pass 2: stale
+      .mockResolvedValueOnce({ docs: [] });       // Pass 3
+
+    mockDeleteYouTubeBroadcast.mockResolvedValueOnce(undefined);
+
+    await scheduleHandler()();
+
+    expect(mockDeleteYouTubeBroadcast).toHaveBeenCalledWith(
+      expect.objectContaining({ clientId: 'mock-YOUTUBE_CLIENT_ID' }),
+      'yt-4',
+    );
+    expect(doc._mockDelete).toHaveBeenCalled();
+  });
+
+  it('deletes Firestore doc even if YouTube delete fails with 404', async () => {
+    const doc = makeDoc('stream-5', { youtube_id: 'yt-5' });
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [doc] })
+      .mockResolvedValueOnce({ docs: [] });
+
+    mockDeleteYouTubeBroadcast.mockRejectedValueOnce({ code: 404 });
+
+    await scheduleHandler()();
+
+    expect(doc._mockDelete).toHaveBeenCalled();
+  });
+
+  it('archives old BROADCAST streams', async () => {
+    const doc = makeDoc('stream-6', {});
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [] })        // Pass 1
+      .mockResolvedValueOnce({ docs: [] })        // Pass 2
+      .mockResolvedValueOnce({ docs: [doc] });    // Pass 3: old broadcast
+
+    await scheduleHandler()();
+
+    expect(doc._mockUpdate).toHaveBeenCalledWith({ status: 'ARCHIVED' });
+  });
+
+  it('skips streams without youtube_id in Pass 1', async () => {
+    const doc = makeDoc('stream-7', {});
+    mockWhereGet
+      .mockResolvedValueOnce({ docs: [doc] })
+      .mockResolvedValueOnce({ docs: [] })
+      .mockResolvedValueOnce({ docs: [] });
+
+    await scheduleHandler()();
+
+    expect(mockGetYouTubeBroadcastStatus).not.toHaveBeenCalled();
+    expect(doc._mockUpdate).not.toHaveBeenCalled();
   });
 });
