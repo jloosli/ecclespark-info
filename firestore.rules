@@ -6,6 +6,10 @@ service cloud.firestore {
       // Writes handled by Cloud Function via Admin SDK (bypasses rules)
       allow create, update, delete: if false;
     }
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow create, update, delete: if false;
+    }
     match /allowed_users/{email} {
       // Only accessible via Admin SDK (Cloud Functions)
       allow read, write: if false;
