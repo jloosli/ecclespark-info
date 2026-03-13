@@ -57,7 +57,7 @@ function createJwt(serviceAccount) {
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
     exp: now + 3600,
-    scope: 'https://www.googleapis.com/auth/firebase',
+    scope: 'https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/identitytoolkit',
   });
 
   const unsigned = `${header}.${payload}`;
