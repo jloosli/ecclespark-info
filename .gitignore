@@ -10,6 +10,10 @@ node_modules
 .DS_Store
 .claude/worktrees/
 
+# Playwright
+test-results/
+playwright-report/
+
 # Generated environment files (contain secrets)
 src/environments/environment.prod.generated.ts
 
