@@ -30,7 +30,7 @@ if (!['add', 'remove', 'remove-pattern'].includes(action) || !target) {
   console.error(
     'Usage: manage-firebase-auth-domain.js <add|remove|remove-pattern> <domain|prefix>'
   );
-  process.exit(0);
+  process.exit(1);
 }
 
 // ── Service account loading ───────────────────────────────────────
@@ -40,7 +40,7 @@ try {
   sa = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
 } catch {
   console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON');
-  process.exit(0);
+  process.exit(1);
 }
 
 // ── JWT creation (RS256, built-in crypto) ─────────────────────────

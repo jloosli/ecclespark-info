@@ -9,6 +9,8 @@ jobs:
   build-and-preview:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    env:
+      FIREBASE_PROJECT_ID: ecclespark-info
 
     steps:
       - uses: actions/checkout@v4
@@ -47,13 +49,14 @@ jobs:
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
-          projectId: ecclespark-info
+          projectId: ${{ env.FIREBASE_PROJECT_ID }}
 
       - name: Add preview domain to Firebase Auth
         if: steps.firebase-deploy.outputs.details_url
         continue-on-error: true
         env:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
+          FIREBASE_PROJECT_ID: ecclespark-info
         run: |
           PREVIEW_URL="${{ steps.firebase-deploy.outputs.details_url }}"
           PREVIEW_DOMAIN=$(echo "$PREVIEW_URL" | sed 's|https\?://||' | sed 's|/.*||')
@@ -71,6 +74,8 @@ jobs:
   cleanup-auth-domain:
     if: github.event.action == 'closed'
     runs-on: ubuntu-latest
+    env:
+      FIREBASE_PROJECT_ID: ecclespark-info
 
     steps:
       - uses: actions/checkout@v4
@@ -83,7 +88,8 @@ jobs:
         continue-on-error: true
         env:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
+          FIREBASE_PROJECT_ID: ecclespark-info
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          echo "Removing authorized domains matching: ecclespark-info--pr${PR_NUMBER}-"
-          node scripts/manage-firebase-auth-domain.js remove-pattern "ecclespark-info--pr${PR_NUMBER}-"
+          echo "Removing authorized domains matching: ${FIREBASE_PROJECT_ID}--pr${PR_NUMBER}-"
+          node scripts/manage-firebase-auth-domain.js remove-pattern "${FIREBASE_PROJECT_ID}--pr${PR_NUMBER}-"
