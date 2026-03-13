@@ -15,10 +15,21 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
 
       - name: Install Angular dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Install Functions dependencies
+        run: cd functions && npm ci
+
+      - name: Run Functions tests
+        run: cd functions && npm test
+
+      - name: Run unit tests
+        run: npm test
 
       - name: Build Angular app
         env:
@@ -29,8 +40,17 @@ jobs:
         run: npm run build:prod
 
       - name: Deploy to Firebase Hosting (Preview)
+        id: firebase-deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ECCLESPARK_INFO }}
           projectId: ecclespark-info
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: npx playwright test
+        env:
+          BASE_URL: ${{ steps.firebase-deploy.outputs.details_url }}

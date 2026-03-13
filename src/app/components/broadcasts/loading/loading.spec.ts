@@ -19,4 +19,11 @@ describe('Loading', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display "Loading..." text', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const h2 = el.querySelector('h2');
+    expect(h2?.textContent).toContain('Loading...');
+  });
+
 });

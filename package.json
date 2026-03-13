@@ -8,7 +8,8 @@
     "build:prod": "node scripts/inject-env.js && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr": "node dist/app/server/server.mjs"
+    "serve:ssr": "node dist/app/server/server.mjs",
+    "test:e2e": "npx playwright test"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -32,6 +33,7 @@
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
