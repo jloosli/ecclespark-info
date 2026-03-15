@@ -5,25 +5,61 @@
 } @else {
   <ul class="space-y-2">
     @for (stream of streams(); track stream.id) {
-      <li
-        class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800"
-      >
-        <div>
-          <p class="font-medium dark:text-white">{{ stream.title }}</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ stream.scheduled_at?.toDate() | date: 'medium' }}
-          </p>
+      <li class="rounded-lg bg-white shadow-sm dark:bg-gray-800">
+        <div class="flex items-center justify-between p-3">
+          <div>
+            <p class="font-medium dark:text-white">{{ stream.title }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              {{ stream.scheduled_at?.toDate() | date: 'medium' }}
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span
+              class="rounded-full px-2 py-0.5 text-xs font-medium"
+              [class]="
+                stream.status === 'BROADCAST'
+                  ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-700'
+              "
+            >
+              {{ stream.status }}
+            </span>
+            @if (stream.status === 'SCHEDULED') {
+              @if (deletingId() === stream.id) {
+                <span class="text-xs text-gray-400">Deleting...</span>
+              } @else if (confirmingId() === stream.id) {
+                <span class="text-xs text-gray-600 dark:text-gray-300">Delete?</span>
+                <button
+                  type="button"
+                  class="rounded bg-red-600 px-2 py-0.5 text-xs font-medium text-white hover:bg-red-700"
+                  (click)="confirmDelete(stream)"
+                >
+                  Confirm
+                </button>
+                <button
+                  type="button"
+                  class="rounded bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
+                  (click)="cancelDelete()"
+                >
+                  Cancel
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="rounded px-2 py-0.5 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                  (click)="requestDelete(stream)"
+                >
+                  Delete
+                </button>
+              }
+            }
+          </div>
         </div>
-        <span
-          class="rounded-full px-2 py-0.5 text-xs font-medium"
-          [class]="
-            stream.status === 'BROADCAST'
-              ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-700'
-          "
-        >
-          {{ stream.status }}
-        </span>
+        @if (deleteError()?.id === stream.id) {
+          <p class="px-3 pb-2 text-xs text-red-600 dark:text-red-400">
+            {{ deleteError()!.message }}
+          </p>
+        }
       </li>
     }
   </ul>

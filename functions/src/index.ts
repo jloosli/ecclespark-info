@@ -4,7 +4,12 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
 import { createYouTubeBroadcast, getYouTubeBroadcastStatus, deleteYouTubeBroadcast } from './youtube';
-import type { CreateBroadcastRequest, CreateBroadcastResponse } from './types';
+import type {
+  CreateBroadcastRequest,
+  CreateBroadcastResponse,
+  DeleteBroadcastRequest,
+  DeleteBroadcastResponse,
+} from './types';
 
 initializeApp();
 const db = getFirestore();
@@ -120,6 +125,96 @@ export const createBroadcast = onCall(
       watchUrl: `https://www.youtube.com/watch?v=${result.youtubeId}`,
       firestoreId: streamDoc.id,
     };
+  },
+);
+
+export const deleteBroadcast = onCall(
+  {
+    secrets: [
+      youtubeOwnerRefreshToken,
+      youtubeClientId,
+      youtubeClientSecret,
+    ],
+    region: 'us-central1',
+    maxInstances: 5,
+  },
+  async (request): Promise<DeleteBroadcastResponse> => {
+    // 1. Verify caller is authenticated
+    if (!request.auth) {
+      throw new HttpsError(
+        'unauthenticated',
+        'You must be signed in to delete a broadcast.',
+      );
+    }
+
+    const callerEmail = request.auth.token.email;
+    if (!callerEmail) {
+      throw new HttpsError(
+        'unauthenticated',
+        'No email associated with this account.',
+      );
+    }
+
+    // 2. Check allowlist
+    const allowDoc = await db
+      .collection('allowed_users')
+      .doc(callerEmail)
+      .get();
+    if (!allowDoc.exists) {
+      throw new HttpsError(
+        'permission-denied',
+        'Your account is not authorized to delete broadcasts.',
+      );
+    }
+
+    // 3. Validate request data
+    const data = request.data as DeleteBroadcastRequest;
+    if (!data.firestoreId || typeof data.firestoreId !== 'string') {
+      throw new HttpsError('invalid-argument', 'Firestore document ID is required.');
+    }
+
+    // 4. Look up Firestore doc and verify status
+    const streamDoc = await db.collection('streams').doc(data.firestoreId).get();
+    if (!streamDoc.exists) {
+      throw new HttpsError('not-found', 'Broadcast not found.');
+    }
+
+    const streamData = streamDoc.data()!;
+    if (streamData.status !== 'SCHEDULED') {
+      throw new HttpsError(
+        'failed-precondition',
+        'Only scheduled broadcasts can be deleted.',
+      );
+    }
+
+    // 5. Delete YouTube broadcast (swallow 404)
+    const youtubeId = streamData.youtube_id;
+    if (youtubeId) {
+      try {
+        await deleteYouTubeBroadcast(
+          {
+            clientId: youtubeClientId.value(),
+            clientSecret: youtubeClientSecret.value(),
+            refreshToken: youtubeOwnerRefreshToken.value(),
+          },
+          youtubeId,
+        );
+      } catch (err: unknown) {
+        const status = (err as { code?: number }).code;
+        if (status !== 404) {
+          console.error(`Failed to delete YouTube broadcast ${youtubeId}:`, err);
+          throw new HttpsError(
+            'internal',
+            'Failed to delete YouTube broadcast. Please try again later.',
+          );
+        }
+      }
+    }
+
+    // 6. Delete Firestore document
+    await streamDoc.ref.delete();
+
+    return { deleted: true };
   },
 );
 
