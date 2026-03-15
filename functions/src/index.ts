@@ -168,13 +168,20 @@ export const deleteBroadcast = onCall(
     }
 
     // 3. Validate request data
-    const data = request.data as DeleteBroadcastRequest;
-    if (!data.firestoreId || typeof data.firestoreId !== 'string') {
+    const data = (request.data || {}) as DeleteBroadcastRequest;
+    const { firestoreId } = data;
+    if (typeof firestoreId !== 'string' || !firestoreId) {
       throw new HttpsError('invalid-argument', 'Firestore document ID is required.');
+    }
+    if (firestoreId.includes('/')) {
+      throw new HttpsError(
+        'invalid-argument',
+        'Firestore document ID must not contain "/".',
+      );
     }
 
     // 4. Look up Firestore doc and verify status
-    const streamDoc = await db.collection('streams').doc(data.firestoreId).get();
+    const streamDoc = await db.collection('streams').doc(firestoreId).get();
     if (!streamDoc.exists) {
       throw new HttpsError('not-found', 'Broadcast not found.');
     }
