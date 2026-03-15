@@ -15,3 +15,13 @@ export interface CreateBroadcastResponse {
   watchUrl: string;
   firestoreId: string;
 }
+
+/** Request payload for the deleteBroadcast callable function. */
+export interface DeleteBroadcastRequest {
+  firestoreId: string;
+}
+
+/** Response from the deleteBroadcast callable function. */
+export interface DeleteBroadcastResponse {
+  deleted: boolean;
+}

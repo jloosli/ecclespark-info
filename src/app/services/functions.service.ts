@@ -23,6 +23,14 @@ export interface CreateBroadcastResponse {
   firestoreId: string;
 }
 
+export interface DeleteBroadcastRequest {
+  firestoreId: string;
+}
+
+export interface DeleteBroadcastResponse {
+  deleted: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FunctionsService {
   private platformId = inject(PLATFORM_ID);
@@ -49,6 +57,21 @@ export class FunctionsService {
       CreateBroadcastRequest,
       CreateBroadcastResponse
     >(functions, 'createBroadcast');
+    const result = await callable(params);
+    return result.data;
+  }
+
+  async deleteBroadcast(
+    params: DeleteBroadcastRequest,
+  ): Promise<DeleteBroadcastResponse> {
+    if (!isPlatformBrowser(this.platformId)) {
+      throw new Error('Cannot call Cloud Functions on the server');
+    }
+    const functions = this.getFunctionsInstance();
+    const callable = httpsCallable<
+      DeleteBroadcastRequest,
+      DeleteBroadcastResponse
+    >(functions, 'deleteBroadcast');
     const result = await callable(params);
     return result.data;
   }
