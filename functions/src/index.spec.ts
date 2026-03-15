@@ -8,12 +8,15 @@ const {
   mockAdd,
   mockWhere,
   mockWhereGet,
+  mockStreamsDocGet,
+  mockStreamsDocDelete,
+  mockStreamsDoc,
   mockStreamsCollection,
   mockCreateYouTubeBroadcast,
   mockGetYouTubeBroadcastStatus,
   mockDeleteYouTubeBroadcast,
   MockHttpsError,
-  capturedHandlerRef,
+  capturedHandlers,
   capturedScheduleHandlerRef,
 } = vi.hoisted(() => {
   const mockGet = vi.fn();
@@ -22,9 +25,15 @@ const {
   const mockAdd = vi.fn();
   const mockWhereGet = vi.fn();
   const mockWhere = vi.fn(() => ({ where: mockWhere, get: mockWhereGet }));
+  const mockStreamsDocGet = vi.fn();
+  const mockStreamsDocDelete = vi.fn();
+  const mockStreamsDoc = vi.fn(() => ({
+    get: mockStreamsDocGet,
+  }));
   const mockStreamsCollection = vi.fn((_name?: string) => ({
     add: mockAdd,
     where: mockWhere,
+    doc: mockStreamsDoc,
   }));
   const mockCreateYouTubeBroadcast = vi.fn();
   const mockGetYouTubeBroadcastStatus = vi.fn();
@@ -39,9 +48,7 @@ const {
     }
   }
 
-  const capturedHandlerRef: { current: ((request: unknown) => Promise<unknown>) | null } = {
-    current: null,
-  };
+  const capturedHandlers: Array<(request: unknown) => Promise<unknown>> = [];
   const capturedScheduleHandlerRef: { current: (() => Promise<void>) | null } = {
     current: null,
   };
@@ -53,12 +60,15 @@ const {
     mockAdd,
     mockWhere,
     mockWhereGet,
+    mockStreamsDocGet,
+    mockStreamsDocDelete,
+    mockStreamsDoc,
     mockStreamsCollection,
     mockCreateYouTubeBroadcast,
     mockGetYouTubeBroadcastStatus,
     mockDeleteYouTubeBroadcast,
     MockHttpsError,
-    capturedHandlerRef,
+    capturedHandlers,
     capturedScheduleHandlerRef,
   };
 });
@@ -98,7 +108,7 @@ vi.mock('firebase-admin/firestore', () => ({
 
 vi.mock('firebase-functions/v2/https', () => ({
   onCall: vi.fn((_opts: unknown, handler: (request: unknown) => Promise<unknown>) => {
-    capturedHandlerRef.current = handler;
+    capturedHandlers.push(handler);
     return 'mocked-cloud-function';
   }),
   HttpsError: MockHttpsError,
@@ -128,11 +138,18 @@ import './index';
 
 // --- Helpers ---
 
-function handler() {
-  if (!capturedHandlerRef.current) {
-    throw new Error('Handler was not captured — onCall mock not invoked');
+function createHandler() {
+  if (!capturedHandlers[0]) {
+    throw new Error('createBroadcast handler was not captured — onCall mock not invoked');
   }
-  return capturedHandlerRef.current;
+  return capturedHandlers[0];
+}
+
+function deleteHandler() {
+  if (!capturedHandlers[1]) {
+    throw new Error('deleteBroadcast handler was not captured — onCall mock not invoked');
+  }
+  return capturedHandlers[1];
 }
 
 function scheduleHandler() {
@@ -165,7 +182,7 @@ describe('createBroadcast onCall handler', () => {
 
   it('throws unauthenticated when request.auth is null', async () => {
     const request = makeRequest({ auth: null });
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'unauthenticated' }),
     );
   });
@@ -174,7 +191,7 @@ describe('createBroadcast onCall handler', () => {
     const request = makeRequest({
       auth: { uid: 'user123', token: {} },
     });
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'unauthenticated' }),
     );
   });
@@ -183,7 +200,7 @@ describe('createBroadcast onCall handler', () => {
     mockGet.mockResolvedValueOnce({ exists: false });
 
     const request = makeRequest();
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'permission-denied' }),
     );
   });
@@ -194,7 +211,7 @@ describe('createBroadcast onCall handler', () => {
     const request = makeRequest({
       data: { title: '', scheduledStartTime: '2026-04-01T10:00:00Z' },
     });
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'invalid-argument' }),
     );
   });
@@ -205,7 +222,7 @@ describe('createBroadcast onCall handler', () => {
     const request = makeRequest({
       data: { title: 'Sunday Service', scheduledStartTime: '' },
     });
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'invalid-argument' }),
     );
   });
@@ -216,7 +233,7 @@ describe('createBroadcast onCall handler', () => {
     const request = makeRequest({
       data: { title: 'Sunday Service', scheduledStartTime: 'not-a-date' },
     });
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'invalid-argument' }),
     );
   });
@@ -226,7 +243,7 @@ describe('createBroadcast onCall handler', () => {
     mockCreateYouTubeBroadcast.mockRejectedValueOnce(new Error('YouTube API down'));
 
     const request = makeRequest();
-    await expect(handler()(request)).rejects.toThrow(
+    await expect(createHandler()(request)).rejects.toThrow(
       expect.objectContaining({ code: 'internal' }),
     );
   });
@@ -241,7 +258,7 @@ describe('createBroadcast onCall handler', () => {
     mockAdd.mockResolvedValueOnce({ id: 'firestore-doc-456' });
 
     const request = makeRequest();
-    const result = await handler()(request);
+    const result = await createHandler()(request);
 
     expect(result).toEqual({
       youtubeId: 'yt-123',
@@ -397,5 +414,127 @@ describe('manageStreamStatuses', () => {
 
     expect(mockGetYouTubeBroadcastStatus).not.toHaveBeenCalled();
     expect(doc._mockUpdate).not.toHaveBeenCalled();
+  });
+});
+
+describe('deleteBroadcast onCall handler', () => {
+  function makeDeleteRequest(overrides: Record<string, unknown> = {}) {
+    return {
+      auth: {
+        uid: 'user123',
+        token: { email: 'test@example.com' },
+      },
+      data: {
+        firestoreId: 'doc-123',
+      },
+      ...overrides,
+    };
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('throws unauthenticated when request.auth is null', async () => {
+    const request = makeDeleteRequest({ auth: null });
+    await expect(deleteHandler()(request)).rejects.toThrow(
+      expect.objectContaining({ code: 'unauthenticated' }),
+    );
+  });
+
+  it('throws permission-denied when user is not on allowlist', async () => {
+    mockGet.mockResolvedValueOnce({ exists: false });
+
+    const request = makeDeleteRequest();
+    await expect(deleteHandler()(request)).rejects.toThrow(
+      expect.objectContaining({ code: 'permission-denied' }),
+    );
+  });
+
+  it('throws invalid-argument for missing firestoreId', async () => {
+    mockGet.mockResolvedValueOnce({ exists: true });
+
+    const request = makeDeleteRequest({ data: {} });
+    await expect(deleteHandler()(request)).rejects.toThrow(
+      expect.objectContaining({ code: 'invalid-argument' }),
+    );
+  });
+
+  it('throws not-found when stream document does not exist', async () => {
+    mockGet.mockResolvedValueOnce({ exists: true });
+    mockStreamsDocGet.mockResolvedValueOnce({ exists: false });
+
+    const request = makeDeleteRequest();
+    await expect(deleteHandler()(request)).rejects.toThrow(
+      expect.objectContaining({ code: 'not-found' }),
+    );
+  });
+
+  it('throws failed-precondition for non-SCHEDULED streams', async () => {
+    mockGet.mockResolvedValueOnce({ exists: true });
+    mockStreamsDocGet.mockResolvedValueOnce({
+      exists: true,
+      data: () => ({ status: 'BROADCAST', youtube_id: 'yt-1' }),
+      ref: { delete: mockStreamsDocDelete },
+    });
+
+    const request = makeDeleteRequest();
+    await expect(deleteHandler()(request)).rejects.toThrow(
+      expect.objectContaining({ code: 'failed-precondition' }),
+    );
+  });
+
+  it('deletes YouTube broadcast and Firestore doc on success', async () => {
+    mockGet.mockResolvedValueOnce({ exists: true });
+    mockStreamsDocGet.mockResolvedValueOnce({
+      exists: true,
+      data: () => ({ status: 'SCHEDULED', youtube_id: 'yt-123' }),
+      ref: { delete: mockStreamsDocDelete },
+    });
+    mockDeleteYouTubeBroadcast.mockResolvedValueOnce(undefined);
+    mockStreamsDocDelete.mockResolvedValueOnce(undefined);
+
+    const request = makeDeleteRequest();
+    const result = await deleteHandler()(request);
+
+    expect(result).toEqual({ deleted: true });
+    expect(mockDeleteYouTubeBroadcast).toHaveBeenCalledWith(
+      expect.objectContaining({ clientId: 'mock-YOUTUBE_CLIENT_ID' }),
+      'yt-123',
+    );
+    expect(mockStreamsDocDelete).toHaveBeenCalled();
+  });
+
+  it('swallows 404 from YouTube and still deletes Firestore doc', async () => {
+    mockGet.mockResolvedValueOnce({ exists: true });
+    mockStreamsDocGet.mockResolvedValueOnce({
+      exists: true,
+      data: () => ({ status: 'SCHEDULED', youtube_id: 'yt-gone' }),
+      ref: { delete: mockStreamsDocDelete },
+    });
+    mockDeleteYouTubeBroadcast.mockRejectedValueOnce({ code: 404 });
+    mockStreamsDocDelete.mockResolvedValueOnce(undefined);
+
+    const request = makeDeleteRequest();
+    const result = await deleteHandler()(request);
+
+    expect(result).toEqual({ deleted: true });
+    expect(mockStreamsDocDelete).toHaveBeenCalled();
+  });
+
+  it('throws internal when YouTube delete fails with non-404 error', async () => {
+    mockGet.mockResolvedValueOnce({ exists: true });
+    mockStreamsDocGet.mockResolvedValueOnce({
+      exists: true,
+      data: () => ({ status: 'SCHEDULED', youtube_id: 'yt-err' }),
+      ref: { delete: mockStreamsDocDelete },
+    });
+    mockDeleteYouTubeBroadcast.mockRejectedValueOnce({ code: 500 });
+
+    const request = makeDeleteRequest();
+    await expect(deleteHandler()(request)).rejects.toThrow(
+      expect.objectContaining({ code: 'internal' }),
+    );
+    expect(mockStreamsDocDelete).not.toHaveBeenCalled();
   });
 });
