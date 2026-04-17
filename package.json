@@ -20,7 +20,7 @@
     "@angular/fire": "^20.0.0",
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@angular/platform-server": "^21.2.4",
+    "@angular/platform-server": "^21.2.9",
     "@angular/router": "^20.0.0",
     "@angular/ssr": "^20.3.21",
     "express": "^5.1.0",
