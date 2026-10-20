@@ -21,7 +21,7 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/platform-server": "^21.2.25",
-    "@angular/router": "^20.3.32",
+    "@angular/router": "^20.3.33",
     "@angular/ssr": "^20.3.36",
     "express": "^5.1.0",
     "firebase": "^12.13.0",
