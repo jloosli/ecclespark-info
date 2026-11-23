@@ -44,12 +44,12 @@
 **Per-request TTL pattern, if caching is ever enabled (option B).** Astro lets route code override the rule's `maxAge`: "Per-route `cache.set()` calls merge with config-level route rules", with scalar values like `maxAge` "last-write-wins" ([Astro caching guide](https://docs.astro.build/en/guides/caching/)). So the home page can do:
 
 ```ts
-// after loading broadcasts + announcements and filtering them by `now`
-const next = Math.min(
-  ...broadcasts.flatMap((b) => [b.starts_at, b.starts_at + SIX_DAYS]),
-  ...announcements.filter((a) => a.show_until).map((a) => a.show_until),
-  ).valueOf();
-const untilNext = Math.ceil((next - now) / 1000);
+// after loading broadcasts + announcements and filtering them by `now` (all times in epoch ms)
+const transitions = [
+  ...broadcasts.flatMap((b) => [b.starts_at, b.starts_at + SIX_DAYS_MS]),
+  ...announcements.flatMap((a) => (a.show_until ? [a.show_until] : [])),
+].filter((t) => t > now);
+const untilNext = transitions.length ? Math.ceil((Math.min(...transitions) - now) / 1000) : 300;
 if (Astro.cache?.enabled) {
   Astro.cache.set(cacheHint); // tags: broadcasts / announcements
   Astro.cache.set({ maxAge: Math.max(0, Math.min(untilNext, 300)), swr: 0 });
