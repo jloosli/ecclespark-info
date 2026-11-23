@@ -1,6 +1,4 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
+# Dependabot version updates.
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
@@ -10,10 +8,24 @@ updates:
     schedule:
       interval: "weekly"
     groups:
+      # Keep every @angular/* package (including @angular/build and the CLI) moving
+      # together, along with the tooling whose majors are tied to Angular's.
       angular:
         patterns:
           - "@angular/*"
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/functions/" # Location of package manifests
+          - "vitest"
+          - "typescript"
+    ignore:
+      # Major upgrades of Angular and its coupled tooling must be done by hand
+      # (ng update), all at once. A lone major bump of @angular/build to v22
+      # broke main in #230.
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  - package-ecosystem: "npm"
+    directory: "/functions/"
     schedule:
       interval: "weekly"
