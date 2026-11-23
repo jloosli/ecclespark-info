@@ -1,0 +1,44 @@
+---
+// Variant C — "Bulletin": no cards. Announcements as a full-width strip under the header,
+// then a typographic dated list (calendar-style date block left, title + link right), Past rows greyed in place.
+import type { Shown } from '../visibility';
+import type { Announcement, Broadcast } from '../model';
+interface Props { broadcasts: Shown<Broadcast>[]; announcements: Shown<Announcement>[] }
+const { broadcasts, announcements } = Astro.props;
+import { fmtDow, fmtDate, fmtMon, fmtTime, linkHint } from '../format';
+---
+{announcements.length > 0 && (
+  <section class="bg-accent/10 border-b border-accent/30">
+    <div class="max-w-3xl mx-auto px-6 py-4 space-y-3">
+      {announcements.map(({ item }) => (
+        <div class="rich flex gap-3 text-sm"><span aria-hidden="true">📣</span><div set:html={item.bodyHtml} /></div>
+      ))}
+    </div>
+  </section>
+)}
+<main class="max-w-3xl mx-auto px-6 py-8">
+  <h2 class="text-xl font-bold border-b-2 border-primary dark:border-slate-400 pb-2 mb-2">Broadcasts</h2>
+  {broadcasts.length === 0 ? (
+    <p class="py-6 text-slate-600 dark:text-slate-300">Nothing scheduled right now. The next link will be posted here.</p>
+  ) : (
+    <ol class="divide-y divide-slate-200 dark:divide-slate-700">
+      {broadcasts.map(({ item, label }) => (
+        <li class:list={['flex items-center gap-5 py-4', label === 'Past' && 'text-slate-400']}>
+          <div class="w-14 shrink-0 text-center leading-tight">
+            <div class="text-xs uppercase">{fmtDow(item.starts_at)}</div>
+            <div class="text-2xl font-bold">{fmtDate(item.starts_at)}</div>
+            <div class="text-xs uppercase">{fmtMon(item.starts_at)}</div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold">{item.title}</div>
+            <div class="text-sm">{fmtTime(item.starts_at)}{label === 'Past' && ' · Past'}</div>
+          </div>
+          <a href={item.link} target="_blank" rel="noopener noreferrer"
+             class:list={['shrink-0 rounded-full px-4 py-2 text-sm font-semibold', label === 'Past' ? 'border border-slate-300 dark:border-slate-600' : 'bg-primary dark:bg-accent text-white hover:bg-primary-hover']}>
+            {label === 'Past' ? 'Replay' : 'Join'} <span class="sr-only">on {linkHint(item.link)}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  )}
+</main>

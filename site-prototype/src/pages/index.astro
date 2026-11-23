@@ -1,0 +1,54 @@
+---
+// PROTOTYPE — three variants of the public page on "/", switchable via ?variant=A|B|C.
+// Fixture scenario via ?scenario=, clock override via ?now=<ISO>. Visibility decided per request (#275).
+import '../styles.css';
+import Header from '../components/Header.astro';
+import PrototypeSwitcher from '../components/PrototypeSwitcher.astro';
+import VariantA from '../variants/VariantA.astro';
+import VariantB from '../variants/VariantB.astro';
+import VariantC from '../variants/VariantC.astro';
+import { fixtures, SCENARIOS, type Scenario } from '../fixtures';
+import { evaluateAnnouncements, evaluateBroadcasts } from '../visibility';
+import { TZ } from '../model';
+
+const VARIANTS = [
+  { key: 'A', name: 'Faithful port' },
+  { key: 'B', name: 'Next Broadcast first' },
+  { key: 'C', name: 'Bulletin list' },
+];
+const q = Astro.url.searchParams;
+const variant = VARIANTS.some((v) => v.key === q.get('variant')) ? q.get('variant')! : 'A';
+const scenario = (SCENARIOS as readonly string[]).includes(q.get('scenario') ?? '') ? (q.get('scenario') as Scenario) : 'typical';
+const nowParam = q.get('now');
+const now = nowParam && !isNaN(Date.parse(nowParam)) ? new Date(nowParam) : new Date();
+
+const data = fixtures(scenario, now);
+const b = evaluateBroadcasts(data.broadcasts, now);
+const a = evaluateAnnouncements(data.announcements, now);
+
+const line = (r: any, when: string) => `  ${r.shown ? '✔' : '✘'} ${r.item.title.padEnd(40)} ${when}  ${r.shown ? (r.label ?? 'shown') : 'hidden: ' + r.reason}`;
+const state = [
+  `variant=${variant} scenario=${scenario}`,
+  `now=${now.toISOString()} (display TZ ${TZ})`,
+  '', 'Broadcasts (shown soonest-first):',
+  ...b.results.map((r) => line(r, 'starts ' + r.item.starts_at.toISOString())),
+  '', 'Announcements (shown newest-first):',
+  ...a.results.map((r) => line(r, r.item.show_until ? 'until ' + r.item.show_until.toISOString() : 'no show_until')),
+].join('\n');
+
+Astro.response.headers.set('Cache-Control', 'no-cache');
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eccles Park Ward Information</title>
+  </head>
+  <body class="min-h-screen pb-24">
+    <Header />
+    {variant === 'A' && <VariantA broadcasts={b.visible} announcements={a.visible} />}
+    {variant === 'B' && <VariantB broadcasts={b.visible} announcements={a.visible} />}
+    {variant === 'C' && <VariantC broadcasts={b.visible} announcements={a.visible} />}
+    <PrototypeSwitcher variants={VARIANTS} current={variant} scenario={scenario} nowIso={now.toISOString()} nowOverridden={!!nowParam} state={state} />
+  </body>
+</html>

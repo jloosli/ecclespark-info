@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+/* Palette carried over from the Angular app (src/app/app.css) */
+@theme {
+  --color-primary: oklch(28% 0.05 250);
+  --color-primary-hover: oklch(32% 0.06 250);
+  --color-accent: oklch(62% 0.17 220);
+}
+
+@layer base {
+  body {
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-900);
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background-color: var(--color-slate-900); color: var(--color-slate-100); }
+  }
+}
+
+/* Stand-in for EmDash's portableText rendering */
+.rich a { color: var(--color-accent); text-decoration: underline; }
+.rich p + p { margin-top: 0.5rem; }
+.rich ul { list-style: disc; padding-left: 1.25rem; }
+.rich strong { font-weight: 600; }
