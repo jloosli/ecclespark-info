@@ -28,7 +28,7 @@
     "marked": "^17.0.5",
     "rxjs": "~7.8.0",
     "temporal-polyfill": "^0.3.2",
-    "tslib": "^2.3.0"
+    "tslib": "^2.9.1"
   },
   "devDependencies": {
     "@angular/build": "^20.3.18",
